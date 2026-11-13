@@ -1,0 +1,20 @@
+{
+  "listas": [
+    {
+      "id": "dart-poo-persistencia-uml",
+      "titulo": "Dart, POO, persistência e UML",
+      "descricao": "40 exercícios para revisar os conteúdos das avaliações, com explicação imediata.",
+      "area": "Programação",
+      "arquivo": "data/listas/dart-poo-persistencia-uml.json",
+      "tags": [
+        "Dart e POO",
+        "SQLite",
+        "Firebase RTDB",
+        "UML"
+      ],
+      "questoes": 40,
+      "versao": 1,
+      "destaque": true
+    }
+  ]
+}

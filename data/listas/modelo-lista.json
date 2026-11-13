@@ -1,0 +1,25 @@
+{
+  "id": "exemplo-nova-lista",
+  "titulo": "Exemplo de nova lista",
+  "subtitulo": "Substitua este exemplo pelas suas questões.",
+  "versao": 1,
+  "diagramas": {},
+  "fontesGerais": [
+    {"titulo": "Apostila da disciplina", "descricao": "Páginas 1–10"}
+  ],
+  "questoes": [
+    {
+      "id": 1,
+      "tipo": "vf",
+      "topico": "Conceitos",
+      "pergunta": "Este é um exemplo de afirmação verdadeira.",
+      "opcoes": [
+        {"texto": "Verdadeiro"},
+        {"texto": "Falso", "porque": "O enunciado é verdadeiro."}
+      ],
+      "correta": 0,
+      "acerto": "A afirmação é verdadeira.",
+      "fonte": {"titulo": "Apostila da disciplina", "local": "Página 3 · Tópico X"}
+    }
+  ]
+}

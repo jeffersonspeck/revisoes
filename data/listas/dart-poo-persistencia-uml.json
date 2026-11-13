@@ -1,0 +1,1367 @@
+{
+  "id": "dart-poo-persistencia-uml",
+  "titulo": "Dart, POO, persistência e UML",
+  "subtitulo": "40 exercícios para revisar os conteúdos das avaliações, com explicação imediata.",
+  "instrucoes": "Marque uma alternativa por questão. Ao responder, veja o motivo. Se errar, a alternativa correta aparece em destaque.",
+  "versao": 1,
+  "assercaoOpcoes": "I e II",
+  "diagramas": {
+    "cliente-pedido": {
+      "legenda": "Associação entre Cliente (1) e Pedido (0..*). Os sinais + e − indicam visibilidade.",
+      "esquerda": {
+        "nome": "Cliente",
+        "atributos": [
+          "- id: int",
+          "+ nome: String"
+        ],
+        "metodos": [
+          "+ exibirNome(): String"
+        ]
+      },
+      "direita": {
+        "nome": "Pedido",
+        "atributos": [
+          "- numero: int",
+          "- fechado: bool",
+          "- total: double"
+        ],
+        "metodos": [
+          "+ adicionarValor(v: double): void",
+          "+ fechar(): void",
+          "+ obterTotal(): double"
+        ]
+      },
+      "esqMulti": "1",
+      "dirMulti": "0..*"
+    },
+    "veiculo-atendimento": {
+      "legenda": "Associação entre Veiculo (1) e Atendimento (0..*). Diagrama didático com duas classes.",
+      "esquerda": {
+        "nome": "Veiculo",
+        "atributos": [
+          "+ placa: String"
+        ],
+        "metodos": [
+          "+ registrarAtendimento(a: Atendimento): void",
+          "+ totalAtendimentos(): int"
+        ]
+      },
+      "direita": {
+        "nome": "Atendimento",
+        "atributos": [
+          "- _situacao: SituacaoAtendimento",
+          "- _itens: List<ItemTrabalho>"
+        ],
+        "metodos": [
+          "+ adicionarTrabalho(t: TipoTrabalho): void",
+          "+ concluir(): void",
+          "+ calcularTotal(): double"
+        ]
+      },
+      "esqMulti": "1",
+      "dirMulti": "0..*"
+    }
+  },
+  "questoes": [
+    {
+      "id": 1,
+      "tipo": "vf",
+      "topico": "Dart e POO",
+      "pergunta": "Uma classe é um modelo; um objeto é uma instância criada a partir desse modelo.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": ""
+        },
+        {
+          "texto": "Falso",
+          "porque": "Classe e objeto não são sinônimos: uma é o modelo, outro é a instância."
+        }
+      ],
+      "correta": 0,
+      "acerto": "Classe define; objeto instancia.",
+      "fonte": {
+        "titulo": "Apostila — Linguagem de Modelagem Unificada (UML)",
+        "local": "Página 25 · Classes, abstração e instanciação"
+      }
+    },
+    {
+      "id": 2,
+      "tipo": "codigo",
+      "topico": "Dart e POO",
+      "pergunta": "Qual é a saída do programa?",
+      "opcoes": [
+        {
+          "texto": "3 / 3",
+          "porque": "O objeto b não foi alterado."
+        },
+        {
+          "texto": "3 / 2",
+          "porque": ""
+        },
+        {
+          "texto": "2 / 3",
+          "porque": "O aumento foi aplicado a a."
+        },
+        {
+          "texto": "2 / 2",
+          "porque": "O método aumentar() altera a. em 1."
+        },
+        {
+          "texto": "Erro de compilação",
+          "porque": "O código instancia e usa a classe corretamente."
+        }
+      ],
+      "correta": 1,
+      "acerto": "Cada objeto guarda seu próprio valor.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 2 · Estado e comportamento"
+      },
+      "codigo": "class Contador {\n  int valor;\n  Contador(this.valor);\n  void aumentar() { valor++; }\n}\nvoid main() {\n  final a = Contador(2);\n  final b = Contador(2);\n  a.aumentar();\n  print('${a.valor} / ${b.valor}');\n}"
+    },
+    {
+      "id": 3,
+      "tipo": "assercao",
+      "topico": "Dart e POO",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": ""
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": "I e II são verdadeiras; o estado próprio justifica a I."
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": "I e II são verdadeiras; o estado próprio justifica a I."
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": "I e II são verdadeiras; o estado próprio justifica a I."
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "I e II são verdadeiras; o estado próprio justifica a I."
+        }
+      ],
+      "correta": 0,
+      "acerto": "A II explica a diferença entre instâncias.",
+      "fonte": {
+        "titulo": "Apostila — Linguagem de Modelagem Unificada (UML)",
+        "local": "Página 27 · Instâncias e propriedades"
+      },
+      "afirmativa": "Duas instâncias de uma mesma classe podem apresentar valores distintos nos atributos.",
+      "razao": "Cada instância possui seu próprio estado, mesmo quando compartilha a definição da classe."
+    },
+    {
+      "id": 4,
+      "tipo": "vf",
+      "topico": "Dart e POO",
+      "pergunta": "Um método declarado como void pode alterar os atributos do objeto.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": ""
+        },
+        {
+          "texto": "Falso",
+          "porque": "void não impede mudanças de estado."
+        }
+      ],
+      "correta": 0,
+      "acerto": "void indica ausência de retorno, não ausência de efeitos.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 9 · Métodos que modificam a lista"
+      }
+    },
+    {
+      "id": 5,
+      "tipo": "codigo",
+      "topico": "Dart e POO",
+      "pergunta": "O que é impresso?",
+      "opcoes": [
+        {
+          "texto": "1",
+          "porque": "add() não é bloqueado por final."
+        },
+        {
+          "texto": "2",
+          "porque": ""
+        },
+        {
+          "texto": "Erro: lista final não pode mudar",
+          "porque": "final impede reatribuição, não add()."
+        },
+        {
+          "texto": "7",
+          "porque": "O programa imprime o tamanho, não o último item."
+        },
+        {
+          "texto": "null",
+          "porque": "length é um inteiro."
+        }
+      ],
+      "correta": 1,
+      "acerto": "A referência é final; a lista continua mutável.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 5 · final não congela objetos"
+      },
+      "codigo": "void main() {\n  final numeros = <int>[3];\n  numeros.add(7);\n  print(numeros.length);\n}"
+    },
+    {
+      "id": 6,
+      "tipo": "vf",
+      "topico": "Encapsulamento",
+      "pergunta": "Em Dart, o prefixo _ torna um membro privado à classe, e não à biblioteca.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": "O material destaca: _ é privado à library, não à classe."
+        },
+        {
+          "texto": "Falso",
+          "porque": ""
+        }
+      ],
+      "correta": 1,
+      "acerto": "Em Dart, _ é privado à biblioteca (library).",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 6 · Privacidade à biblioteca"
+      }
+    },
+    {
+      "id": 7,
+      "tipo": "assercao",
+      "topico": "Encapsulamento",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": "Retornar a própria List não a protege: add() continua disponível."
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": "Retornar a própria List não a protege: add() continua disponível."
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": "Retornar a própria List não a protege: add() continua disponível."
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": ""
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "Retornar a própria List não a protege: add() continua disponível."
+        }
+      ],
+      "correta": 3,
+      "acerto": "I é falsa; II é verdadeira.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 7 · Getters e UnmodifiableListView"
+      },
+      "afirmativa": "Um getter que retorna diretamente uma List mutável impede qualquer alteração externa na lista.",
+      "razao": "Quem recebe a própria lista pode chamar métodos mutadores, como add()."
+    },
+    {
+      "id": 8,
+      "tipo": "codigo",
+      "topico": "Encapsulamento",
+      "pergunta": "Qual é a saída?",
+      "opcoes": [
+        {
+          "texto": "10",
+          "porque": "O método depositar(5) modifica _saldo."
+        },
+        {
+          "texto": "15",
+          "porque": ""
+        },
+        {
+          "texto": "null",
+          "porque": "O getter lê um valor inteiro."
+        },
+        {
+          "texto": "Erro: getter precisa de parênteses",
+          "porque": "Getters são acessados como propriedades."
+        },
+        {
+          "texto": "Erro: _saldo é privado",
+          "porque": "O acesso externo é por saldo, um getter público."
+        }
+      ],
+      "correta": 1,
+      "acerto": "saldo é getter; depositar muda _saldo.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 7 · Sintaxe de getter"
+      },
+      "codigo": "class Conta {\n  int _saldo = 10;\n  int get saldo => _saldo;\n  void depositar(int n) { _saldo += n; }\n}\nvoid main() {\n  final c = Conta();\n  c.depositar(5);\n  print(c.saldo);\n}"
+    },
+    {
+      "id": 9,
+      "tipo": "vf",
+      "topico": "Encapsulamento",
+      "pergunta": "UnmodifiableListView impede até mesmo que a própria classe altere a lista original.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": "A restrição vale para a visão, não para a coleção original."
+        },
+        {
+          "texto": "Falso",
+          "porque": ""
+        }
+      ],
+      "correta": 1,
+      "acerto": "A visão é protegida; a lista original pode mudar.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 7 · Visão viva não modificável"
+      }
+    },
+    {
+      "id": 10,
+      "tipo": "codigo",
+      "topico": "Encapsulamento",
+      "pergunta": "Qual é a saída do getter total?",
+      "opcoes": [
+        {
+          "texto": "12",
+          "porque": "É double, portanto a representação impressa é 12.0."
+        },
+        {
+          "texto": "12.0",
+          "porque": ""
+        },
+        {
+          "texto": "0.0",
+          "porque": "fold soma os elementos."
+        },
+        {
+          "texto": "Erro: total é método",
+          "porque": "get permite acessar como propriedade."
+        },
+        {
+          "texto": "2.0",
+          "porque": "length não é usado no cálculo."
+        }
+      ],
+      "correta": 1,
+      "acerto": "O getter executa fold e soma 5.0 + 7.0.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 7 · Getters de valores calculados"
+      },
+      "codigo": "class Soma {\n  final List<double> _valores = [5.0, 7.0];\n  double get total =>\n      _valores.fold(0.0, (s, x) => s + x);\n}\nvoid main() => print(Soma().total);"
+    },
+    {
+      "id": 11,
+      "tipo": "assercao",
+      "topico": "Encapsulamento",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": "I e II são verdadeiras, mas const não explica a regra de final."
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": ""
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": "I e II são verdadeiras, mas const não explica a regra de final."
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": "I e II são verdadeiras, mas const não explica a regra de final."
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "I e II são verdadeiras, mas const não explica a regra de final."
+        }
+      ],
+      "correta": 1,
+      "acerto": "As duas são verdadeiras, sem relação de justificativa.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 6 · final versus const"
+      },
+      "afirmativa": "Um campo final int codigo não pode ser reatribuído depois de inicializado.",
+      "razao": "const exige uma expressão que seja constante de compilação."
+    },
+    {
+      "id": 12,
+      "tipo": "codigo",
+      "topico": "Construtores",
+      "pergunta": "O que ocorre ao compilar este programa?",
+      "opcoes": [
+        {
+          "texto": "Imprime zero",
+          "porque": "Não existe print."
+        },
+        {
+          "texto": "Cria um Produto com codigo null",
+          "porque": "required exige o argumento."
+        },
+        {
+          "texto": "Erro de compilação pela ausência do argumento nomeado",
+          "porque": ""
+        },
+        {
+          "texto": "Lança StateError na execução",
+          "porque": "Não há validação de estado."
+        },
+        {
+          "texto": "Cria Produto com codigo 1",
+          "porque": "Não foi definido valor padrão."
+        }
+      ],
+      "correta": 2,
+      "acerto": "required exige codigo na chamada.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 8 · Construtor e parâmetros nomeados"
+      },
+      "codigo": "class Produto {\n  final int codigo;\n  Produto({required this.codigo});\n}\nvoid main() {\n  Produto();\n}"
+    },
+    {
+      "id": 13,
+      "tipo": "vf",
+      "topico": "Construtores",
+      "pergunta": "O modificador required garante, sozinho, que um int informado seja maior do que zero.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": "required não verifica se o inteiro é positivo."
+        },
+        {
+          "texto": "Falso",
+          "porque": ""
+        }
+      ],
+      "correta": 1,
+      "acerto": "required exige o argumento, mas não valida seu valor.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 8 · required e validação"
+      }
+    },
+    {
+      "id": 14,
+      "tipo": "assercao",
+      "topico": "Construtores",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": "Ambas verdadeiras, mas tratam de tipos diferentes de erro."
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": ""
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": "Ambas verdadeiras, mas tratam de tipos diferentes de erro."
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": "Ambas verdadeiras, mas tratam de tipos diferentes de erro."
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "Ambas verdadeiras, mas tratam de tipos diferentes de erro."
+        }
+      ],
+      "correta": 1,
+      "acerto": "São usos distintos; II não justifica I.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 15 · ArgumentError versus StateError"
+      },
+      "afirmativa": "ArgumentError pode indicar um argumento inválido fornecido ao construtor.",
+      "razao": "StateError pode indicar uma operação inválida devido ao estado atual de um objeto."
+    },
+    {
+      "id": 15,
+      "tipo": "codigo",
+      "topico": "Construtores",
+      "pergunta": "O que acontece na criação de Cliente?",
+      "opcoes": [
+        {
+          "texto": "O objeto é criado com nome vazio",
+          "porque": "A verificação ocorre no construtor."
+        },
+        {
+          "texto": "O programa imprime espaços",
+          "porque": "Não existe print."
+        },
+        {
+          "texto": "Lança ArgumentError",
+          "porque": ""
+        },
+        {
+          "texto": "Lança StateError",
+          "porque": "O erro lançado no código é ArgumentError."
+        },
+        {
+          "texto": "Erro de compilação por trim()",
+          "porque": "String tem trim()."
+        }
+      ],
+      "correta": 2,
+      "acerto": "trim() torna o texto vazio; a validação rejeita.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 8 · trim().isEmpty e ArgumentError"
+      },
+      "codigo": "class Cliente {\n  final String nome;\n  Cliente(this.nome) {\n    if (nome.trim().isEmpty) {\n      throw ArgumentError('Nome inválido');\n    }\n  }\n}\nvoid main() { Cliente('   '); }"
+    },
+    {
+      "id": 16,
+      "tipo": "vf",
+      "topico": "Modelos e dados",
+      "pergunta": "No padrão de copyWith usado nos projetos, alterar um campo da cópia modifica automaticamente o objeto original.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": "O novo objeto é distinto; o original não é alterado."
+        },
+        {
+          "texto": "Falso",
+          "porque": ""
+        }
+      ],
+      "correta": 1,
+      "acerto": "copyWith cria uma nova instância, preservando a anterior.",
+      "fonte": {
+        "titulo": "Projeto SQLite — persistencia_flutter",
+        "local": "lib/main.dart · Pessoa.copyWith",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter/blob/main/lib/main.dart"
+      }
+    },
+    {
+      "id": 17,
+      "tipo": "codigo",
+      "topico": "Modelos e dados",
+      "pergunta": "O que o programa imprime?",
+      "opcoes": [
+        {
+          "texto": "7 | Lia | 20",
+          "porque": "A nova idade informada é 21."
+        },
+        {
+          "texto": "null | Lia | 21",
+          "porque": "O id é preservado pelo método."
+        },
+        {
+          "texto": "7 | Lia | 21",
+          "porque": ""
+        },
+        {
+          "texto": "7 | null | 21",
+          "porque": "O nome original permanece."
+        },
+        {
+          "texto": "Erro: id deve ser obrigatório",
+          "porque": "id é int? e foi preenchido."
+        }
+      ],
+      "correta": 2,
+      "acerto": "copyWith troca idade e preserva id e nome.",
+      "fonte": {
+        "titulo": "Projeto SQLite — persistencia_flutter",
+        "local": "lib/main.dart · classe Pessoa / DatabaseHelper",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter/blob/main/lib/main.dart"
+      },
+      "codigo": "class Pessoa {\n  final int? id;\n  final String nome;\n  final int idade;\n  const Pessoa({this.id, required this.nome,\n    required this.idade});\n  Pessoa copyWith({int? idade}) => Pessoa(\n    id: id, nome: nome, idade: idade ?? this.idade);\n}\nvoid main() {\n  final p = Pessoa(id: 7, nome: 'Lia', idade: 20);\n  final nova = p.copyWith(idade: 21);\n  print('${nova.id} | ${nova.nome} | ${nova.idade}');\n}"
+    },
+    {
+      "id": 18,
+      "tipo": "codigo",
+      "topico": "Modelos e dados",
+      "pergunta": "A chamada copyWith(nome: null) produz qual nome?",
+      "opcoes": [
+        {
+          "texto": "null",
+          "porque": "O operador ?? usa o campo original quando o argumento é null."
+        },
+        {
+          "texto": "Ana",
+          "porque": ""
+        },
+        {
+          "texto": "String vazia",
+          "porque": "Não há conversão para texto vazio."
+        },
+        {
+          "texto": "Erro por argumento nomeado",
+          "porque": "O parâmetro nome existe."
+        },
+        {
+          "texto": "Um novo texto automático",
+          "porque": "Nenhum texto padrão é criado."
+        }
+      ],
+      "correta": 1,
+      "acerto": "Com ??, null faz preservar o valor anterior.",
+      "fonte": {
+        "titulo": "Projeto SQLite — persistencia_flutter",
+        "local": "lib/main.dart · Pessoa.copyWith e operador ??",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter/blob/main/lib/main.dart"
+      },
+      "codigo": "class Pessoa {\n  final String nome;\n  const Pessoa(this.nome);\n  Pessoa copyWith({String? nome}) =>\n      Pessoa(nome ?? this.nome);\n}\nvoid main() {\n  final p = Pessoa('Ana');\n  print(p.copyWith(nome: null).nome);\n}"
+    },
+    {
+      "id": 19,
+      "tipo": "vf",
+      "topico": "Modelos e dados",
+      "pergunta": "Na classe Pessoa do projeto SQLite, toMap() só inclui a chave id quando o id não é null.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": ""
+        },
+        {
+          "texto": "Falso",
+          "porque": "O código testa if (id != null) antes de incluir id."
+        }
+      ],
+      "correta": 0,
+      "acerto": "ID nulo fica fora do mapa para permitir a geração no banco.",
+      "fonte": {
+        "titulo": "Projeto SQLite — persistencia_flutter",
+        "local": "lib/main.dart · Pessoa.toMap",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter/blob/main/lib/main.dart"
+      }
+    },
+    {
+      "id": 20,
+      "tipo": "codigo",
+      "topico": "Modelos e dados",
+      "pergunta": "Qual idade será impressa após a conversão?",
+      "opcoes": [
+        {
+          "texto": "19",
+          "porque": "toInt() não arredonda para o inteiro mais próximo."
+        },
+        {
+          "texto": "18.9",
+          "porque": "O atributo idade é int."
+        },
+        {
+          "texto": "18",
+          "porque": ""
+        },
+        {
+          "texto": "null",
+          "porque": "idade foi fornecida."
+        },
+        {
+          "texto": "Erro de compilação",
+          "porque": "O cast num aceita double."
+        }
+      ],
+      "correta": 2,
+      "acerto": "toInt() descarta a parte fracionária.",
+      "fonte": {
+        "titulo": "Projeto SQLite — persistencia_flutter",
+        "local": "lib/main.dart · Pessoa.fromMap",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter/blob/main/lib/main.dart"
+      },
+      "codigo": "class Pessoa {\n  final int idade;\n  Pessoa.fromMap(Map<String, dynamic> map)\n      : idade = (map['idade'] as num).toInt();\n}\nvoid main() {\n  final p = Pessoa.fromMap({'idade': 18.9});\n  print(p.idade);\n}"
+    },
+    {
+      "id": 21,
+      "tipo": "codigo",
+      "topico": "Listas e estado",
+      "pergunta": "A segunda inclusão de 40 é rejeitada. Qual total será exibido?",
+      "opcoes": [
+        {
+          "texto": "100",
+          "porque": "O 40 repetido não entra na lista."
+        },
+        {
+          "texto": "90",
+          "porque": "A soma seria 40 + 10, não 90."
+        },
+        {
+          "texto": "50",
+          "porque": ""
+        },
+        {
+          "texto": "40",
+          "porque": "Há também o valor 10."
+        },
+        {
+          "texto": "0",
+          "porque": "A lista recebeu dois valores."
+        }
+      ],
+      "correta": 2,
+      "acerto": "any evita repetição; fold soma 40 + 10.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 9 · any evita duplicados"
+      },
+      "codigo": "class Valores {\n  final List<int> _itens = [];\n  void add(int n) {\n    if (!_itens.any((x) => x == n)) _itens.add(n);\n  }\n  int total() => _itens.fold(0, (s, x) => s + x);\n}\nvoid main() {\n  final v = Valores();\n  v.add(40); v.add(10); v.add(40);\n  print(v.total());\n}"
+    },
+    {
+      "id": 22,
+      "tipo": "vf",
+      "topico": "Listas e estado",
+      "pergunta": "indexWhere() devolve -1 quando nenhum elemento satisfaz a condição.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": ""
+        },
+        {
+          "texto": "Falso",
+          "porque": "O método não retorna 0 quando a busca falha."
+        }
+      ],
+      "correta": 0,
+      "acerto": "-1 indica que não encontrou nenhum índice.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 9 · indexWhere e -1"
+      }
+    },
+    {
+      "id": 23,
+      "tipo": "codigo",
+      "topico": "Listas e estado",
+      "pergunta": "Qual é o resultado de total()?",
+      "opcoes": [
+        {
+          "texto": "18",
+          "porque": "removeAt(1) elimina o 9."
+        },
+        {
+          "texto": "9",
+          "porque": ""
+        },
+        {
+          "texto": "14",
+          "porque": "O valor 9 foi excluído, não o 4."
+        },
+        {
+          "texto": "5",
+          "porque": "O 4 permanece."
+        },
+        {
+          "texto": "-1",
+          "porque": "-1 é usado por indexWhere, não aqui."
+        }
+      ],
+      "correta": 1,
+      "acerto": "removeAt(1) exclui a posição 1; ficam 5 e 4.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 9 · removeAt e índices"
+      },
+      "codigo": "class Valores {\n  final List<int> _itens = [5, 9, 4];\n  void removerIndice(int i) { _itens.removeAt(i); }\n  int total() => _itens.fold(0, (s, x) => s + x);\n}\nvoid main() {\n  final v = Valores();\n  v.removerIndice(1);\n  print(v.total());\n}"
+    },
+    {
+      "id": 24,
+      "tipo": "assercao",
+      "topico": "Listas e estado",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": "A apostila bloqueia a conclusão sem trabalhos."
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": "A apostila bloqueia a conclusão sem trabalhos."
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": "A apostila bloqueia a conclusão sem trabalhos."
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": ""
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "A apostila bloqueia a conclusão sem trabalhos."
+        }
+      ],
+      "correta": 3,
+      "acerto": "I falsa; II verdadeira: não se conclui sem itens.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 11 · Conclusão bloqueada sem itens"
+      },
+      "afirmativa": "Na apostila, concluir um Atendimento sem itens é permitido.",
+      "razao": "alterarSituacao(...) verifica _itens.isEmpty ao tentar concluir e lança StateError."
+    },
+    {
+      "id": 25,
+      "tipo": "codigo",
+      "topico": "Listas e estado",
+      "pergunta": "O que acontece na última chamada a adicionar()?",
+      "opcoes": [
+        {
+          "texto": "O objeto volta a ficar aberto",
+          "porque": "O método não reabre estado."
+        },
+        {
+          "texto": "O valor 3 é incluído",
+          "porque": "concluido bloqueia novos valores."
+        },
+        {
+          "texto": "Lança ArgumentError",
+          "porque": "A verificação lança StateError."
+        },
+        {
+          "texto": "Lança StateError",
+          "porque": ""
+        },
+        {
+          "texto": "Ignora a inclusão sem avisar",
+          "porque": "O método lança exceção."
+        }
+      ],
+      "correta": 3,
+      "acerto": "Após concluir, adicionar() lança StateError.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 12 · _exigirEmAndamento"
+      },
+      "codigo": "class Servico {\n  bool _concluido = false;\n  final List<int> _itens = [];\n  void adicionar(int valor) {\n    if (_concluido) throw StateError('Concluído');\n    _itens.add(valor);\n  }\n  void concluir() { _concluido = true; }\n}\nvoid main() {\n  final s = Servico();\n  s.adicionar(8);\n  s.concluir();\n  s.adicionar(3);\n}"
+    },
+    {
+      "id": 26,
+      "tipo": "vf",
+      "topico": "SQLite",
+      "pergunta": "O app do projeto SQLite precisa de internet para consultar as pessoas já gravadas localmente.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": "SQLite opera localmente; não exige servidor remoto."
+        },
+        {
+          "texto": "Falso",
+          "porque": ""
+        }
+      ],
+      "correta": 1,
+      "acerto": "SQLite local funciona sem conexão com a internet.",
+      "fonte": {
+        "titulo": "Projeto SQLite — persistencia_flutter",
+        "local": "README.md · Por que SQLite?",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter/blob/main/README.md"
+      }
+    },
+    {
+      "id": 27,
+      "tipo": "assercao",
+      "topico": "SQLite",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": ""
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": "Ambas verdadeiras; o Singleton fundamenta a I."
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": "Ambas verdadeiras; o Singleton fundamenta a I."
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": "Ambas verdadeiras; o Singleton fundamenta a I."
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "Ambas verdadeiras; o Singleton fundamenta a I."
+        }
+      ],
+      "correta": 0,
+      "acerto": "A II explica como o acesso compartilhado é implementado.",
+      "fonte": {
+        "titulo": "Projeto SQLite — persistencia_flutter",
+        "local": "lib/main.dart · DatabaseHelper._internal / instance",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter/blob/main/lib/main.dart"
+      },
+      "afirmativa": "DatabaseHelper disponibiliza uma instância compartilhada por meio de instance.",
+      "razao": "O exemplo implementa Singleton com um construtor nomeado privado e um campo static final."
+    },
+    {
+      "id": 28,
+      "tipo": "codigo",
+      "topico": "SQLite",
+      "pergunta": "Qual é a saída? (Não há acesso real ao banco neste trecho.)",
+      "opcoes": [
+        {
+          "texto": "null",
+          "porque": "O método retorna um int."
+        },
+        {
+          "texto": "1",
+          "porque": "O teste de id nulo retorna antes."
+        },
+        {
+          "texto": "0",
+          "porque": ""
+        },
+        {
+          "texto": "Future<int>",
+          "porque": "await extrai o resultado do Future."
+        },
+        {
+          "texto": "StateError",
+          "porque": "Não há exceção nesse fluxo."
+        }
+      ],
+      "correta": 2,
+      "acerto": "id é null; update retorna 0 antes do banco.",
+      "fonte": {
+        "titulo": "Projeto SQLite — persistencia_flutter",
+        "local": "lib/main.dart · DatabaseHelper.update",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter/blob/main/lib/main.dart"
+      },
+      "codigo": "class Pessoa {\n  final int? id;\n  const Pessoa({this.id});\n}\nFuture<int> update(Pessoa p) async {\n  if (p.id == null) return 0;\n  return 1;\n}\nvoid main() async {\n  print(await update(const Pessoa()));\n}"
+    },
+    {
+      "id": 29,
+      "tipo": "codigo",
+      "topico": "SQLite",
+      "pergunta": "A função retorna Future<List<int>>. O que o print exibe?",
+      "opcoes": [
+        {
+          "texto": "Future<List<int>>",
+          "porque": "await aguarda o resultado e entrega a lista."
+        },
+        {
+          "texto": "7",
+          "porque": "7 é o último elemento, não o tamanho."
+        },
+        {
+          "texto": "3",
+          "porque": ""
+        },
+        {
+          "texto": "0",
+          "porque": "A lista tem três entradas."
+        },
+        {
+          "texto": "Erro: await só funciona com SQLite",
+          "porque": "await funciona com Futures em Dart."
+        }
+      ],
+      "correta": 2,
+      "acerto": "await recebe a lista; length é 3.",
+      "fonte": {
+        "titulo": "Projeto SQLite — persistencia_flutter",
+        "local": "README.md · getAll e Future<List<Pessoa>>",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter/blob/main/README.md"
+      },
+      "codigo": "Future<List<int>> listar() async => [3, 5, 7];\nvoid main() async {\n  final itens = await listar();\n  print(itens.length);\n}"
+    },
+    {
+      "id": 30,
+      "tipo": "vf",
+      "topico": "Firebase RTDB",
+      "pergunta": "Declarar métodos em uma classe abstract TodoRepository já executa automaticamente operações no Firebase.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": "Um método abstrato não executa persistência por si só."
+        },
+        {
+          "texto": "Falso",
+          "porque": ""
+        }
+      ],
+      "correta": 1,
+      "acerto": "O contrato declara; a implementação concreta acessa o Firebase.",
+      "fonte": {
+        "titulo": "Projeto Firebase RTDB — persistencia_flutter_firebase_RTDB",
+        "local": "lib/data/repositories/todo_repository.dart",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter_firebase_RTDB/blob/main/lib/data/repositories/todo_repository.dart"
+      }
+    },
+    {
+      "id": 31,
+      "tipo": "assercao",
+      "topico": "Firebase RTDB",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": "Future produz um resultado; Stream pode emitir vários."
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": "Future produz um resultado; Stream pode emitir vários."
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": ""
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": "Future produz um resultado; Stream pode emitir vários."
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "Future produz um resultado; Stream pode emitir vários."
+        }
+      ],
+      "correta": 2,
+      "acerto": "I verdadeira; II falsa: Future não é fluxo contínuo.",
+      "fonte": {
+        "titulo": "Projeto Firebase RTDB — persistencia_flutter_firebase_RTDB",
+        "local": "lib/data/repositories/firebase_todo_repository.dart · watchTodos",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter_firebase_RTDB/blob/main/lib/data/repositories/firebase_todo_repository.dart"
+      },
+      "afirmativa": "watchTodos() com Stream<List<TodoItem>> é adequado para observar mudanças sucessivas nas tarefas.",
+      "razao": "Um Future<List<TodoItem>> emite automaticamente novos resultados a cada alteração futura no banco."
+    },
+    {
+      "id": 32,
+      "tipo": "codigo",
+      "topico": "Firebase RTDB",
+      "pergunta": "Qual linha será impressa?",
+      "opcoes": [
+        {
+          "texto": "true / true",
+          "porque": "O objeto original permanece false."
+        },
+        {
+          "texto": "false / false",
+          "porque": "A cópia foi criada com done true."
+        },
+        {
+          "texto": "false / true",
+          "porque": ""
+        },
+        {
+          "texto": "true / false",
+          "porque": "Os valores estão invertidos."
+        },
+        {
+          "texto": "Erro: final impede copyWith",
+          "porque": "A cópia é outra instância."
+        }
+      ],
+      "correta": 2,
+      "acerto": "copyWith cria outra tarefa, sem mudar a original.",
+      "fonte": {
+        "titulo": "Projeto Firebase RTDB — persistencia_flutter_firebase_RTDB",
+        "local": "lib/data/models/todo_item.dart · copyWith",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter_firebase_RTDB/blob/main/lib/data/models/todo_item.dart"
+      },
+      "codigo": "class Tarefa {\n  final bool done;\n  const Tarefa(this.done);\n  Tarefa copyWith({bool? done}) =>\n      Tarefa(done ?? this.done);\n}\nvoid main() {\n  final a = Tarefa(false);\n  final b = a.copyWith(done: true);\n  print('${a.done} / ${b.done}');\n}"
+    },
+    {
+      "id": 33,
+      "tipo": "vf",
+      "topico": "Firebase RTDB",
+      "pergunta": "No código FirebaseTodoRepository, _todosRef.remove() exclui toda a coleção /todos, e não apenas um item.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": ""
+        },
+        {
+          "texto": "Falso",
+          "porque": "Para apagar só um item, usa-se child(key).remove()."
+        }
+      ],
+      "correta": 0,
+      "acerto": "remove() na referência /todos remove esse nó inteiro.",
+      "fonte": {
+        "titulo": "Projeto Firebase RTDB — persistencia_flutter_firebase_RTDB",
+        "local": "lib/data/repositories/firebase_todo_repository.dart · clearAll e remove",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter_firebase_RTDB/blob/main/lib/data/repositories/firebase_todo_repository.dart"
+      }
+    },
+    {
+      "id": 34,
+      "tipo": "codigo",
+      "topico": "Firebase RTDB",
+      "pergunta": "A tarefa possui done == true. Qual atualização o repositório solicita?",
+      "opcoes": [
+        {
+          "texto": "done = true",
+          "porque": "O operador ! inverte o booleano."
+        },
+        {
+          "texto": "done = false",
+          "porque": ""
+        },
+        {
+          "texto": "Excluir todo o nó",
+          "porque": "update não remove a referência."
+        },
+        {
+          "texto": "Trocar o identificador",
+          "porque": "A chave key não é alterada."
+        },
+        {
+          "texto": "Criar uma nova tarefa",
+          "porque": "É atualização do item existente."
+        }
+      ],
+      "correta": 1,
+      "acerto": "!true resulta em false, no campo done.",
+      "fonte": {
+        "titulo": "Projeto Firebase RTDB — persistencia_flutter_firebase_RTDB",
+        "local": "lib/data/repositories/firebase_todo_repository.dart · toggleDone",
+        "url": "https://github.com/jeffersonspeck/persistencia_flutter_firebase_RTDB/blob/main/lib/data/repositories/firebase_todo_repository.dart"
+      },
+      "codigo": "class Tarefa {\n  final String key;\n  final bool done;\n  Tarefa(this.key, this.done);\n}\nMap<String, Object> atualizacao(Tarefa t) =>\n    {'done': !t.done};\nvoid main() {\n  final t = Tarefa('abc', true);\n  print(atualizacao(t)['done']);\n}"
+    },
+    {
+      "id": 35,
+      "tipo": "uml",
+      "topico": "UML",
+      "pergunta": "No diagrama, o que significa + fechar(): void?",
+      "opcoes": [
+        {
+          "texto": "Atributo privado do tipo void",
+          "porque": "Parênteses indicam operação."
+        },
+        {
+          "texto": "Método público sem valor de retorno",
+          "porque": ""
+        },
+        {
+          "texto": "Herança da classe Pedido",
+          "porque": "Não há seta de generalização."
+        },
+        {
+          "texto": "Atributo público booleano",
+          "porque": "O símbolo () indica método."
+        },
+        {
+          "texto": "Construtor obrigatório",
+          "porque": "O nome não coincide com a classe."
+        }
+      ],
+      "correta": 1,
+      "acerto": "“+” é público; “()” indica método; void não retorna valor.",
+      "fonte": {
+        "titulo": "Apostila — Linguagem de Modelagem Unificada (UML)",
+        "local": "Página 55 · Diagrama de classes e operações"
+      },
+      "diagrama": "cliente-pedido"
+    },
+    {
+      "id": 36,
+      "tipo": "uml",
+      "topico": "UML",
+      "pergunta": "Segundo as multiplicidades apresentadas, qual leitura está correta?",
+      "opcoes": [
+        {
+          "texto": "Cada cliente tem exatamente um pedido",
+          "porque": "0..* admite nenhum ou vários."
+        },
+        {
+          "texto": "Cada pedido pode ter vários clientes",
+          "porque": "Junto a Cliente aparece 1."
+        },
+        {
+          "texto": "Um cliente pode ter 0..* pedidos; cada pedido tem 1 cliente",
+          "porque": ""
+        },
+        {
+          "texto": "As classes não podem se relacionar",
+          "porque": "Há uma associação entre elas."
+        },
+        {
+          "texto": "Cada pedido necessariamente tem 2 clientes",
+          "porque": "Não aparece a multiplicidade 2."
+        }
+      ],
+      "correta": 2,
+      "acerto": "Cliente: 0..* pedidos. Pedido: 1 cliente.",
+      "fonte": {
+        "titulo": "Apostila — Linguagem de Modelagem Unificada (UML)",
+        "local": "Página 49 · Associação e multiplicidade"
+      },
+      "diagrama": "cliente-pedido"
+    },
+    {
+      "id": 37,
+      "tipo": "uml",
+      "topico": "UML",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": ""
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": "“−” marca privacidade; “+” marca acesso público."
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": "“−” marca privacidade; “+” marca acesso público."
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": "“−” marca privacidade; “+” marca acesso público."
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "“−” marca privacidade; “+” marca acesso público."
+        }
+      ],
+      "correta": 0,
+      "acerto": "A II explica a leitura do atributo fechado.",
+      "fonte": {
+        "titulo": "Apostila — Linguagem de Modelagem Unificada (UML)",
+        "local": "Página 55 · Notação de atributos"
+      },
+      "afirmativa": "No diagrama, o atributo - fechado: bool não é público.",
+      "razao": "O símbolo - em uma classe UML representa visibilidade privada.",
+      "diagrama": "cliente-pedido"
+    },
+    {
+      "id": 38,
+      "tipo": "uml",
+      "topico": "UML",
+      "pergunta": "Na classe Veiculo, qual item é um método e não um atributo?",
+      "opcoes": [
+        {
+          "texto": "placa: String",
+          "porque": "É atributo tipado."
+        },
+        {
+          "texto": "registrarAtendimento(a: Atendimento): void",
+          "porque": ""
+        },
+        {
+          "texto": "O nome da classe Veiculo",
+          "porque": "Nome de classe não é método."
+        },
+        {
+          "texto": "1",
+          "porque": "É multiplicidade de associação."
+        },
+        {
+          "texto": "0..*",
+          "porque": "É multiplicidade, não operação."
+        }
+      ],
+      "correta": 1,
+      "acerto": "O item tem parâmetros e tipo de retorno.",
+      "fonte": {
+        "titulo": "Apostila — Linguagem de Modelagem Unificada (UML)",
+        "local": "Página 55 · Diagrama de classe: atributos e métodos"
+      },
+      "diagrama": "veiculo-atendimento"
+    },
+    {
+      "id": 39,
+      "tipo": "uml",
+      "topico": "UML",
+      "pergunta": "O que significa a associação entre Veiculo e Atendimento?",
+      "opcoes": [
+        {
+          "texto": "Um atendimento pertence a vários veículos",
+          "porque": "O lado Veiculo indica 1."
+        },
+        {
+          "texto": "Um veículo não pode ter atendimentos",
+          "porque": "0..* permite zero ou mais."
+        },
+        {
+          "texto": "Um veículo pode ter zero ou muitos atendimentos; cada atendimento tem 1 veículo",
+          "porque": ""
+        },
+        {
+          "texto": "A relação é obrigatoriamente herança",
+          "porque": "A linha representa associação."
+        },
+        {
+          "texto": "Um veículo terá exatamente dois atendimentos",
+          "porque": "Não aparece o número 2."
+        }
+      ],
+      "correta": 2,
+      "acerto": "Cada Atendimento: 1 Veiculo. Um Veiculo: 0..* Atendimentos.",
+      "fonte": {
+        "titulo": "Apostila — Linguagem de Modelagem Unificada (UML)",
+        "local": "Página 49 · Relacionamento e associação"
+      },
+      "diagrama": "veiculo-atendimento"
+    },
+    {
+      "id": 40,
+      "tipo": "uml",
+      "topico": "UML",
+      "pergunta": "Considerando - _situacao e + concluir(): void, qual é a melhor decisão de projeto?",
+      "opcoes": [
+        {
+          "texto": "Alterar _situacao diretamente em qualquer tela",
+          "porque": "O atributo é privado e deve seguir regras."
+        },
+        {
+          "texto": "Eliminar concluir(), pois não possui retorno",
+          "porque": "Métodos void podem alterar estado."
+        },
+        {
+          "texto": "Usar concluir() para aplicar regras antes de mudar a situação",
+          "porque": ""
+        },
+        {
+          "texto": "Tornar todos os atributos públicos para evitar métodos",
+          "porque": "Isso enfraquece o encapsulamento."
+        },
+        {
+          "texto": "Usar 0..* como nome do método",
+          "porque": "0..* é multiplicidade."
+        }
+      ],
+      "correta": 2,
+      "acerto": "Método público concentra validações do estado privado.",
+      "fonte": {
+        "titulo": "Apostila — Raio-X de uma Classe em Dart",
+        "local": "Página 12 · Proteção de alteração por métodos"
+      },
+      "diagrama": "veiculo-atendimento"
+    }
+  ],
+  "fontesGerais": [
+    {
+      "titulo": "Apostila Raio-X de uma Classe em Dart",
+      "descricao": "PDF distribuído em aula, páginas 2 a 20."
+    },
+    {
+      "titulo": "Apostila Linguagem de Modelagem Unificada (UML)",
+      "descricao": "PDF distribuído em aula, especialmente páginas 25–35 e 48–55."
+    },
+    {
+      "titulo": "Persistência local SQLite",
+      "descricao": "README e lib/main.dart",
+      "url": "https://github.com/jeffersonspeck/persistencia_flutter"
+    },
+    {
+      "titulo": "Firebase Realtime Database",
+      "descricao": "README, modelos e repositórios",
+      "url": "https://github.com/jeffersonspeck/persistencia_flutter_firebase_RTDB"
+    }
+  ]
+}
