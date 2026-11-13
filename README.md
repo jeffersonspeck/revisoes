@@ -4,9 +4,9 @@ Projeto de **listas de exercícios com correção imediata**, feito em HTML, CSS
 
 ## 🌐 Acessar a página de exercícios
 
-**[Abrir o catálogo de listas no GitHub Pages](https://jeffersonspeck.github.io/revisoes/listas-interativas/)**
+**[Abrir o catálogo de listas no GitHub Pages]([https://jeffersonspeck.github.io/revisoes/listas-interativas/](https://jeffersonspeck.github.io/revisoes/))**
 
-**[Abrir diretamente a lista Dart, POO, persistência e UML — 40 questões](https://jeffersonspeck.github.io/revisoes/listas-interativas/lista.html?lista=dart-poo-persistencia-uml)**
+**[Abrir diretamente a lista Dart, POO, persistência e UML — 40 questões]([https://jeffersonspeck.github.io/revisoes/listas-interativas/lista.html?lista=dart-poo-persistencia-uml](https://jeffersonspeck.github.io/revisoes/lista.html?lista=dart-poo-persistencia-uml))**
 
 > Os links acima serão ativados **depois da publicação**. Eles consideram que o repositório será criado com o nome `listas-interativas`, no usuário GitHub `jeffersonspeck`. Se usar outro nome, substitua o trecho do endereço correspondente.
 
