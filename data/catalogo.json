@@ -15,6 +15,24 @@
       "questoes": 40,
       "versao": 1,
       "destaque": true
+    },
+    {
+      "id": "banco-de-dados-sql",
+      "titulo": "Banco de Dados: DDL, DML, DQL, JOINs e subconsultas",
+      "descricao": "80 exercícios para ler SQL, interpretar modelos de tabelas e prever resultados de consultas, com explicação imediata.",
+      "area": "Banco de Dados",
+      "arquivo": "data/listas/banco-de-dados-sql.json",
+      "tags": [
+        "DDL e restrições",
+        "DML e transações",
+        "SELECT e agregação",
+        "JOINs",
+        "Subconsultas"
+      ],
+      "questoes": 80,
+      "versao": 1,
+      "destaque": true,
+      "icone": "SQL"
     }
   ]
 }

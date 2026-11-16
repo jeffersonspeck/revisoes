@@ -4,7 +4,7 @@ import json
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = json.loads((ROOT / 'data/catalogo.json').read_text(encoding='utf-8'))
-TYPES = {'vf', 'codigo', 'assercao', 'uml', 'multipla'}
+TYPES = {'vf', 'codigo', 'assercao', 'uml', 'multipla', 'sql', 'modelo'}
 errors = []
 for entry in CATALOG.get('listas', []):
     file = ROOT / entry['arquivo']
@@ -36,6 +36,9 @@ for entry in CATALOG.get('listas', []):
             errors.append(f"{prefix}: falta localização do material")
         if q.get('diagrama') and q['diagrama'] not in data.get('diagramas', {}):
             errors.append(f"{prefix}: diagrama inexistente")
+        for t in q.get('tabelas', []):
+            if t not in data.get('tabelasDados', {}):
+                errors.append(f"{prefix}: tabela de dados inexistente ({t})")
         for i, option in enumerate(ops):
             if not option.get('texto'):
                 errors.append(f"{prefix}: alternativa {i+1} sem texto")

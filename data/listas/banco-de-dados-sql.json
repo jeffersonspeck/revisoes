@@ -1,0 +1,3525 @@
+{
+  "id": "banco-de-dados-sql",
+  "titulo": "Banco de Dados: DDL, DML, DQL, JOINs e subconsultas",
+  "subtitulo": "80 exercícios para ler, interpretar e prever o resultado de comandos SQL, com explicação imediata.",
+  "instrucoes": "Leia o SQL, os dados e o modelo de cada questão antes de responder. Ao errar, a alternativa correta aparece em destaque.",
+  "versao": 1,
+  "assercaoOpcoes": "I e II",
+  "fontesGerais": [
+    {
+      "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+      "descricao": "CREATE TABLE, tipos de dados, restrições, chaves compostas, ON DELETE / ON UPDATE (19 páginas)"
+    },
+    {
+      "titulo": "Apostila — DML (Data Manipulation Language)",
+      "descricao": "INSERT, UPDATE, DELETE, transações e boas práticas (4 páginas)"
+    },
+    {
+      "titulo": "Apostila — DQL (Data Query Language)",
+      "descricao": "SELECT, operadores, LIKE/ILIKE, agregações, GROUP BY, HAVING e joins (8 páginas)"
+    },
+    {
+      "titulo": "Slides — Joins e Subconsultas",
+      "descricao": "INNER, LEFT, RIGHT, FULL e CROSS JOIN; subconsultas no WHERE, FROM e SELECT"
+    },
+    {
+      "titulo": "Material — Subconsultas (base DVD Rental)",
+      "descricao": "Subconsultas escalares, de múltiplas linhas, correlacionadas, ANY, ALL e custo"
+    }
+  ],
+  "diagramas": {
+    "er-vendas": {
+      "tipo": "er",
+      "legenda": "Modelo de vendas. PK = chave primária; FK = chave estrangeira; UQ = UNIQUE. As setas apontam da FK para a PK referenciada.",
+      "tabelas": [
+        {
+          "nome": "clientes",
+          "colunas": [
+            {
+              "nome": "id_cliente",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "nome",
+              "tipo": "VARCHAR(100)"
+            },
+            {
+              "nome": "email",
+              "tipo": "VARCHAR(100)",
+              "chave": "UQ"
+            }
+          ]
+        },
+        {
+          "nome": "pedidos",
+          "colunas": [
+            {
+              "nome": "id_pedido",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "id_cliente",
+              "tipo": "INT",
+              "chave": "FK"
+            },
+            {
+              "nome": "data_pedido",
+              "tipo": "DATE"
+            },
+            {
+              "nome": "valor_total",
+              "tipo": "DECIMAL(10,2)"
+            }
+          ]
+        },
+        {
+          "nome": "itens_pedido",
+          "colunas": [
+            {
+              "nome": "id_pedido",
+              "tipo": "INT",
+              "chave": "PK FK"
+            },
+            {
+              "nome": "id_produto",
+              "tipo": "INT",
+              "chave": "PK FK"
+            },
+            {
+              "nome": "quantidade",
+              "tipo": "INT"
+            },
+            {
+              "nome": "preco_unitario",
+              "tipo": "DECIMAL(10,2)"
+            }
+          ]
+        },
+        {
+          "nome": "produtos",
+          "colunas": [
+            {
+              "nome": "id_produto",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "nome_produto",
+              "tipo": "VARCHAR(100)"
+            },
+            {
+              "nome": "preco",
+              "tipo": "DECIMAL(10,2)"
+            }
+          ]
+        }
+      ],
+      "relacoes": [
+        {
+          "de": "pedidos.id_cliente",
+          "para": "clientes.id_cliente",
+          "card": "N : 1"
+        },
+        {
+          "de": "itens_pedido.id_pedido",
+          "para": "pedidos.id_pedido",
+          "card": "N : 1"
+        },
+        {
+          "de": "itens_pedido.id_produto",
+          "para": "produtos.id_produto",
+          "card": "N : 1"
+        }
+      ]
+    },
+    "er-escola": {
+      "tipo": "er",
+      "legenda": "Modelo acadêmico com tabela associativa. PK FK = a coluna faz parte da chave primária e também é chave estrangeira.",
+      "tabelas": [
+        {
+          "nome": "alunos",
+          "colunas": [
+            {
+              "nome": "id_aluno",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "nome",
+              "tipo": "VARCHAR(100)"
+            }
+          ]
+        },
+        {
+          "nome": "matriculas",
+          "colunas": [
+            {
+              "nome": "id_aluno",
+              "tipo": "INT",
+              "chave": "PK FK"
+            },
+            {
+              "nome": "id_curso",
+              "tipo": "INT",
+              "chave": "PK FK"
+            },
+            {
+              "nome": "data_matricula",
+              "tipo": "DATE"
+            }
+          ]
+        },
+        {
+          "nome": "cursos",
+          "colunas": [
+            {
+              "nome": "id_curso",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "titulo",
+              "tipo": "VARCHAR(80)"
+            }
+          ]
+        }
+      ],
+      "relacoes": [
+        {
+          "de": "matriculas.id_aluno",
+          "para": "alunos.id_aluno",
+          "card": "N : 1"
+        },
+        {
+          "de": "matriculas.id_curso",
+          "para": "cursos.id_curso",
+          "card": "N : 1"
+        }
+      ]
+    },
+    "er-rh": {
+      "tipo": "er",
+      "legenda": "Modelo de RH. A coluna departamento_id NÃO tem NOT NULL.",
+      "tabelas": [
+        {
+          "nome": "departamentos",
+          "colunas": [
+            {
+              "nome": "id",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "nome",
+              "tipo": "VARCHAR(50)"
+            }
+          ]
+        },
+        {
+          "nome": "funcionarios",
+          "colunas": [
+            {
+              "nome": "id",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "nome",
+              "tipo": "VARCHAR(100)"
+            },
+            {
+              "nome": "cargo",
+              "tipo": "VARCHAR(50)"
+            },
+            {
+              "nome": "salario",
+              "tipo": "DECIMAL(10,2)"
+            },
+            {
+              "nome": "departamento_id",
+              "tipo": "INT · aceita NULL",
+              "chave": "FK"
+            }
+          ]
+        }
+      ],
+      "relacoes": [
+        {
+          "de": "funcionarios.departamento_id",
+          "para": "departamentos.id",
+          "card": "N : 1"
+        }
+      ]
+    },
+    "er-dvd": {
+      "tipo": "er",
+      "legenda": "Recorte simplificado da base DVD Rental usada no material de subconsultas.",
+      "tabelas": [
+        {
+          "nome": "customer",
+          "colunas": [
+            {
+              "nome": "customer_id",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "first_name",
+              "tipo": "VARCHAR"
+            },
+            {
+              "nome": "last_name",
+              "tipo": "VARCHAR"
+            }
+          ]
+        },
+        {
+          "nome": "payment",
+          "colunas": [
+            {
+              "nome": "payment_id",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "customer_id",
+              "tipo": "INT",
+              "chave": "FK"
+            },
+            {
+              "nome": "amount",
+              "tipo": "NUMERIC(5,2)"
+            },
+            {
+              "nome": "payment_date",
+              "tipo": "TIMESTAMP"
+            }
+          ]
+        },
+        {
+          "nome": "film",
+          "colunas": [
+            {
+              "nome": "film_id",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "title",
+              "tipo": "VARCHAR"
+            },
+            {
+              "nome": "length",
+              "tipo": "SMALLINT"
+            },
+            {
+              "nome": "rating",
+              "tipo": "VARCHAR"
+            },
+            {
+              "nome": "rental_rate",
+              "tipo": "NUMERIC(4,2)"
+            }
+          ]
+        },
+        {
+          "nome": "film_category",
+          "colunas": [
+            {
+              "nome": "film_id",
+              "tipo": "INT",
+              "chave": "PK FK"
+            },
+            {
+              "nome": "category_id",
+              "tipo": "INT",
+              "chave": "PK FK"
+            }
+          ]
+        },
+        {
+          "nome": "category",
+          "colunas": [
+            {
+              "nome": "category_id",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "name",
+              "tipo": "VARCHAR(25)"
+            }
+          ]
+        }
+      ],
+      "relacoes": [
+        {
+          "de": "payment.customer_id",
+          "para": "customer.customer_id",
+          "card": "N : 1"
+        },
+        {
+          "de": "film_category.film_id",
+          "para": "film.film_id",
+          "card": "N : 1"
+        },
+        {
+          "de": "film_category.category_id",
+          "para": "category.category_id",
+          "card": "N : 1"
+        }
+      ]
+    },
+    "er-biblioteca": {
+      "tipo": "er",
+      "legenda": "Requisitos extras: titulo é obrigatório; id_autor é obrigatório; ano deve ser maior ou igual a 1500.",
+      "tabelas": [
+        {
+          "nome": "autores",
+          "colunas": [
+            {
+              "nome": "id_autor",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "nome",
+              "tipo": "VARCHAR(100)"
+            }
+          ]
+        },
+        {
+          "nome": "livros",
+          "colunas": [
+            {
+              "nome": "id_livro",
+              "tipo": "INT",
+              "chave": "PK"
+            },
+            {
+              "nome": "titulo",
+              "tipo": "VARCHAR(150)"
+            },
+            {
+              "nome": "ano",
+              "tipo": "INT"
+            },
+            {
+              "nome": "id_autor",
+              "tipo": "INT",
+              "chave": "FK"
+            }
+          ]
+        }
+      ],
+      "relacoes": [
+        {
+          "de": "livros.id_autor",
+          "para": "autores.id_autor",
+          "card": "N : 1"
+        }
+      ]
+    }
+  },
+  "tabelasDados": {
+    "clientes": {
+      "titulo": "clientes",
+      "colunas": [
+        "id",
+        "nome"
+      ],
+      "linhas": [
+        [
+          1,
+          "Ana"
+        ],
+        [
+          2,
+          "Bruno"
+        ],
+        [
+          3,
+          "Carla"
+        ],
+        [
+          4,
+          "Daniel"
+        ]
+      ]
+    },
+    "pedidos": {
+      "titulo": "pedidos",
+      "colunas": [
+        "id",
+        "cliente_id",
+        "produto"
+      ],
+      "linhas": [
+        [
+          1,
+          1,
+          "Notebook"
+        ],
+        [
+          2,
+          2,
+          "Smartphone"
+        ],
+        [
+          3,
+          2,
+          "Tablet"
+        ],
+        [
+          4,
+          5,
+          "Monitor"
+        ]
+      ]
+    },
+    "funcionarios": {
+      "titulo": "funcionarios",
+      "colunas": [
+        "id",
+        "nome",
+        "cargo",
+        "salario",
+        "departamento_id"
+      ],
+      "linhas": [
+        [
+          1,
+          "Ana",
+          "Analista",
+          "3000.00",
+          10
+        ],
+        [
+          2,
+          "Bruno",
+          "Gerente",
+          "6000.00",
+          10
+        ],
+        [
+          3,
+          "Carla",
+          "Analista",
+          "3500.00",
+          20
+        ],
+        [
+          4,
+          "Diego",
+          "Vendedor",
+          "2000.00",
+          20
+        ],
+        [
+          5,
+          "Elisa",
+          "Gerente",
+          "5000.00",
+          20
+        ],
+        [
+          6,
+          "Hugo",
+          "Estagiário",
+          "1200.00",
+          null
+        ]
+      ]
+    },
+    "departamentos": {
+      "titulo": "departamentos",
+      "colunas": [
+        "id",
+        "nome"
+      ],
+      "linhas": [
+        [
+          10,
+          "TI"
+        ],
+        [
+          20,
+          "Vendas"
+        ],
+        [
+          30,
+          "RH"
+        ]
+      ]
+    },
+    "film": {
+      "titulo": "film",
+      "colunas": [
+        "film_id",
+        "title",
+        "length",
+        "rating",
+        "rental_rate"
+      ],
+      "linhas": [
+        [
+          1,
+          "Alpha",
+          90,
+          "G",
+          "0.99"
+        ],
+        [
+          2,
+          "Bravo",
+          120,
+          "PG",
+          "2.99"
+        ],
+        [
+          3,
+          "Charlie",
+          150,
+          "PG",
+          "4.99"
+        ],
+        [
+          4,
+          "Delta",
+          100,
+          "G",
+          "2.99"
+        ],
+        [
+          5,
+          "Echo",
+          140,
+          "R",
+          "4.99"
+        ]
+      ]
+    },
+    "matriculas": {
+      "titulo": "matriculas",
+      "colunas": [
+        "id_aluno",
+        "id_curso",
+        "data_matricula"
+      ],
+      "linhas": [
+        [
+          1,
+          10,
+          "2026-02-10"
+        ],
+        [
+          1,
+          20,
+          "2026-02-10"
+        ],
+        [
+          2,
+          10,
+          "2026-02-11"
+        ]
+      ]
+    },
+    "contas": {
+      "titulo": "contas",
+      "colunas": [
+        "id",
+        "saldo"
+      ],
+      "linhas": [
+        [
+          1,
+          "500.00"
+        ],
+        [
+          2,
+          "200.00"
+        ]
+      ]
+    },
+    "nomes": {
+      "titulo": "pessoas",
+      "colunas": [
+        "nome"
+      ],
+      "linhas": [
+        [
+          "Ana"
+        ],
+        [
+          "ANA"
+        ],
+        [
+          "Joana"
+        ],
+        [
+          "Mariana"
+        ],
+        [
+          "Daniel"
+        ]
+      ]
+    }
+  },
+  "questoes": [
+    {
+      "id": 1,
+      "tipo": "multipla",
+      "topico": "DDL e tipos de dados",
+      "pergunta": "Classifique o comando: UPDATE produtos SET preco = preco * 1.05 WHERE id_produto = 3;",
+      "opcoes": [
+        {
+          "texto": "DML, pois modifica registros existentes.",
+          "porque": ""
+        },
+        {
+          "texto": "DDL, pois altera um valor armazenado na tabela.",
+          "porque": "Alterar dados não é alterar a estrutura. DDL atua sobre a tabela em si (colunas, restrições)."
+        },
+        {
+          "texto": "DQL, pois usa WHERE para localizar a linha.",
+          "porque": "WHERE aparece em UPDATE, DELETE e SELECT. O que define o grupo é o comando principal."
+        },
+        {
+          "texto": "DDL, pois aplica uma restrição de domínio.",
+          "porque": "Restrições são declaradas com CREATE/ALTER; aqui nenhuma restrição é criada."
+        },
+        {
+          "texto": "Não pertence a nenhum grupo da SQL.",
+          "porque": "UPDATE é um dos três comandos principais da DML."
+        }
+      ],
+      "correta": 0,
+      "acerto": "UPDATE modifica registros existentes: é DML.",
+      "fonte": {
+        "titulo": "Apostila — DML (Data Manipulation Language)",
+        "local": "Página 1 · Comandos DML"
+      }
+    },
+    {
+      "id": 2,
+      "tipo": "multipla",
+      "topico": "DDL e tipos de dados",
+      "pergunta": "Uma coluna vai guardar o CPF com exatamente 11 dígitos, que pode começar com zero (ex.: 01234567890) e não será usado em cálculos. Qual tipo é o mais adequado, conforme o exemplo da apostila?",
+      "opcoes": [
+        {
+          "texto": "INT",
+          "porque": "INT descarta zeros à esquerda (01234… vira 1234…) e o maior INT é 2.147.483.647, menor que muitos CPFs."
+        },
+        {
+          "texto": "DECIMAL(11,0)",
+          "porque": "Também é numérico: perde o zero à esquerda e sugere um valor para cálculo."
+        },
+        {
+          "texto": "CHAR(11)",
+          "porque": ""
+        },
+        {
+          "texto": "BOOLEAN",
+          "porque": "BOOLEAN guarda apenas TRUE/FALSE."
+        },
+        {
+          "texto": "DATE",
+          "porque": "DATE guarda datas no formato AAAA-MM-DD."
+        }
+      ],
+      "correta": 2,
+      "acerto": "CHAR(11): texto de tamanho fixo, preserva zeros à esquerda (cpf CHAR(11) UNIQUE NOT NULL no exemplo).",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 2 e 3 · Tabela funcionarios e tipos de dados"
+      }
+    },
+    {
+      "id": 3,
+      "tipo": "multipla",
+      "topico": "DDL e tipos de dados",
+      "pergunta": "Uma coluna foi declarada como DECIMAL(10,2). Qual é o maior valor positivo que ela consegue armazenar?",
+      "opcoes": [
+        {
+          "texto": "9.999.999.999,00",
+          "porque": "São 10 dígitos no total (precisão), e 2 deles ficam após a vírgula (escala)."
+        },
+        {
+          "texto": "10,2",
+          "porque": "10 e 2 são a precisão e a escala, não um valor."
+        },
+        {
+          "texto": "999.999.999,99",
+          "porque": "Isso daria 11 dígitos no total."
+        },
+        {
+          "texto": "99.999.999,99",
+          "porque": ""
+        },
+        {
+          "texto": "Não há limite: DECIMAL é ilimitado.",
+          "porque": "A precisão p limita o total de dígitos."
+        }
+      ],
+      "correta": 3,
+      "acerto": "Precisão 10 = 10 dígitos no total; escala 2 = 2 após a vírgula. Restam 8 antes: 99.999.999,99.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 3 · DECIMAL(p, s)"
+      }
+    },
+    {
+      "id": 4,
+      "tipo": "sql",
+      "topico": "DDL e tipos de dados",
+      "pergunta": "Por que o comando abaixo falha ao ser executado?",
+      "codigo": "CREATE TABLE cursos (\n    id_curso INT PRIMARY KEY,\n    titulo VARCHAR(80) NOT NULL,\n    criado_em DATE DEFAULT CURRENT_DATE,\n);",
+      "opcoes": [
+        {
+          "texto": "Porque a tabela não tem chave estrangeira.",
+          "porque": "FOREIGN KEY é opcional."
+        },
+        {
+          "texto": "Porque VARCHAR precisa ter tamanho maior que 100.",
+          "porque": "VARCHAR(80) é válido."
+        },
+        {
+          "texto": "Porque PRIMARY KEY deve ficar sempre no final da tabela.",
+          "porque": "PRIMARY KEY pode ser declarada inline, na linha da coluna."
+        },
+        {
+          "texto": "Porque DEFAULT não pode ser usado com DATE.",
+          "porque": "A apostila usa data_cadastro DATE DEFAULT CURRENT_DATE."
+        },
+        {
+          "texto": "Porque há uma vírgula depois da última coluna, antes do parêntese de fechamento.",
+          "porque": ""
+        }
+      ],
+      "correta": 4,
+      "acerto": "Após o último item da lista não pode haver vírgula: o SGBD espera outra coluna e encontra ')'.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 2 · Sintaxe básica do CREATE TABLE"
+      }
+    },
+    {
+      "id": 5,
+      "tipo": "sql",
+      "topico": "DDL e tipos de dados",
+      "pergunta": "Sobre a tabela criada abaixo, qual afirmação está correta?",
+      "codigo": "CREATE TABLE funcionarios (\n    id_funcionario INT PRIMARY KEY,\n    nome VARCHAR(100) NOT NULL,\n    cpf CHAR(11) UNIQUE NOT NULL,\n    data_admissao DATE NOT NULL DEFAULT CURRENT_DATE,\n    salario DECIMAL(10,2) CHECK (salario >= 1000.00),\n    cargo VARCHAR(50) NOT NULL,\n    id_departamento INT,\n    FOREIGN KEY (id_departamento) REFERENCES departamentos(id_departamento)\n);",
+      "opcoes": [
+        {
+          "texto": "É possível cadastrar um funcionário com salário 900.00.",
+          "porque": "CHECK (salario >= 1000.00) rejeita 900.00."
+        },
+        {
+          "texto": "Dois funcionários podem ter o mesmo CPF.",
+          "porque": "cpf é UNIQUE: não aceita valores repetidos."
+        },
+        {
+          "texto": "Todo funcionário é obrigado a ter id_departamento.",
+          "porque": "id_departamento não tem NOT NULL; pode ficar NULL."
+        },
+        {
+          "texto": "Se data_admissao for omitida no INSERT, ela recebe a data atual.",
+          "porque": ""
+        },
+        {
+          "texto": "A coluna nome aceita NULL.",
+          "porque": "nome é NOT NULL: o valor é obrigatório."
+        }
+      ],
+      "correta": 3,
+      "acerto": "DEFAULT CURRENT_DATE preenche data_admissao quando o INSERT não informa a coluna.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 2 · Exemplo CREATE TABLE funcionarios"
+      }
+    },
+    {
+      "id": 6,
+      "tipo": "sql",
+      "topico": "DDL e tipos de dados",
+      "pergunta": "Requisito: \"livro_isbn tem sempre 13 caracteres e identifica cada livro; titulo é obrigatório (até 150 caracteres); preco não pode ser negativo, mas pode ser zero (livro gratuito); estoque vale 0 se não for informado\". Qual CREATE TABLE atende a TODOS os requisitos?",
+      "opcoesCodigo": true,
+      "opcoes": [
+        {
+          "texto": "CREATE TABLE livros (\n  livro_isbn CHAR(13) PRIMARY KEY,\n  titulo VARCHAR(150),\n  preco DECIMAL(10,2) CHECK (preco >= 0),\n  estoque INT DEFAULT 0\n);",
+          "porque": "titulo ficou sem NOT NULL, então não é obrigatório."
+        },
+        {
+          "texto": "CREATE TABLE livros (\n  livro_isbn CHAR(13) PRIMARY KEY,\n  titulo VARCHAR(150) NOT NULL,\n  preco DECIMAL(10,2) CHECK (preco >= 0),\n  estoque INT DEFAULT 0\n);",
+          "porque": ""
+        },
+        {
+          "texto": "CREATE TABLE livros (\n  livro_isbn CHAR(13) PRIMARY KEY,\n  titulo VARCHAR(150) NOT NULL,\n  preco DECIMAL(10,2) DEFAULT 0,\n  estoque INT CHECK (estoque >= 0)\n);",
+          "porque": "DEFAULT e CHECK estão trocados: o preço negativo não é barrado e o estoque não tem padrão 0."
+        },
+        {
+          "texto": "CREATE TABLE livros (\n  livro_isbn CHAR(13),\n  titulo VARCHAR(150) PRIMARY KEY,\n  preco DECIMAL(10,2) CHECK (preco >= 0),\n  estoque INT DEFAULT 0\n);",
+          "porque": "A chave primária deveria ser livro_isbn, não titulo."
+        },
+        {
+          "texto": "CREATE TABLE livros (\n  livro_isbn CHAR(13) PRIMARY KEY,\n  titulo VARCHAR(150) NOT NULL,\n  preco DECIMAL(10,2) CHECK (preco > 0),\n  estoque INT DEFAULT 0\n);",
+          "porque": "CHECK (preco > 0) recusa o livro gratuito (preço zero)."
+        }
+      ],
+      "correta": 1,
+      "acerto": "PK em livro_isbn, NOT NULL em titulo, CHECK (preco >= 0) e DEFAULT 0 em estoque.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 9 e 10 · Restrições inline"
+      }
+    },
+    {
+      "id": 7,
+      "tipo": "vf",
+      "topico": "Restrições e chaves",
+      "pergunta": "Segundo a apostila, PRIMARY KEY combina as restrições NOT NULL e UNIQUE.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": ""
+        },
+        {
+          "texto": "Falso",
+          "porque": "PRIMARY KEY = NOT NULL + UNIQUE."
+        }
+      ],
+      "correta": 0,
+      "acerto": "A chave primária não aceita nulos nem repetidos: identifica cada linha.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 5 · PRIMARY KEY"
+      }
+    },
+    {
+      "id": 8,
+      "tipo": "sql",
+      "topico": "Restrições e chaves",
+      "pergunta": "A tabela produtos foi criada como abaixo e está vazia. Depois do INSERT, o que retorna o SELECT?",
+      "codigo": "CREATE TABLE produtos (\n    id_produto INT PRIMARY KEY,\n    nome VARCHAR(100) NOT NULL,\n    preco DECIMAL(10,2) CHECK (preco >= 0),\n    categoria VARCHAR(50) DEFAULT 'Geral',\n    estoque INT DEFAULT 0 CHECK (estoque >= 0)\n);\n\nINSERT INTO produtos (id_produto, nome, preco)\nVALUES (7, 'Caneta', 2.50);\n\nSELECT nome, categoria, estoque FROM produtos;",
+      "opcoes": [
+        {
+          "texto": "Caneta | Geral | 0",
+          "porque": ""
+        },
+        {
+          "texto": "Caneta | NULL | NULL",
+          "porque": "As colunas omitidas têm DEFAULT; por isso não ficam NULL."
+        },
+        {
+          "texto": "Caneta | Geral | NULL",
+          "porque": "estoque também tem DEFAULT 0."
+        },
+        {
+          "texto": "Erro: todas as colunas precisam ser informadas.",
+          "porque": "Com a lista de colunas no INSERT, as demais recebem o padrão."
+        },
+        {
+          "texto": "Erro: CHECK (estoque >= 0) não foi satisfeito.",
+          "porque": "O padrão 0 satisfaz estoque >= 0."
+        }
+      ],
+      "correta": 0,
+      "acerto": "As colunas omitidas recebem os valores DEFAULT: 'Geral' e 0.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 10 · Exemplo 2: tabela produtos"
+      }
+    },
+    {
+      "id": 9,
+      "tipo": "sql",
+      "topico": "Restrições e chaves",
+      "pergunta": "Considerando a tabela contas abaixo, o que acontece ao executar o INSERT?",
+      "codigo": "CREATE TABLE contas (\n    id_conta INT PRIMARY KEY,\n    saldo DECIMAL(10,2) CONSTRAINT chk_saldo_inicial CHECK (saldo >= 0),\n    tipo_conta VARCHAR(20) NOT NULL,\n    CONSTRAINT chk_tipo_conta CHECK (tipo_conta IN ('Corrente', 'Poupança'))\n);\n\nINSERT INTO contas VALUES (3, 0, 'Investimento');",
+      "opcoes": [
+        {
+          "texto": "O registro é inserido normalmente.",
+          "porque": "'Investimento' não está na lista permitida pelo CHECK."
+        },
+        {
+          "texto": "Erro, violando chk_saldo_inicial.",
+          "porque": "saldo = 0 satisfaz saldo >= 0."
+        },
+        {
+          "texto": "Erro, violando chk_tipo_conta.",
+          "porque": ""
+        },
+        {
+          "texto": "Erro, porque o nome da restrição deveria ser igual ao da coluna.",
+          "porque": "O nome da CONSTRAINT é livre; nomeá-la só ajuda a identificar o erro."
+        },
+        {
+          "texto": "O registro é inserido com tipo_conta = NULL.",
+          "porque": "CHECK não troca o valor: ele rejeita a linha inteira."
+        }
+      ],
+      "correta": 2,
+      "acerto": "tipo_conta IN ('Corrente','Poupança') falha; o erro informa o nome chk_tipo_conta.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 11 · Nomeando restrições CHECK"
+      }
+    },
+    {
+      "id": 10,
+      "tipo": "assercao",
+      "topico": "Restrições e chaves",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "afirmativa": "Nomear uma restrição com CONSTRAINT, como em CONSTRAINT chk_tipo_conta CHECK (...), facilita a manutenção do banco.",
+      "razao": "Quando a restrição é violada, o nome dela aparece na mensagem de erro, mostrando qual regra foi desrespeitada.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": ""
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        }
+      ],
+      "correta": 0,
+      "acerto": "O nome identifica a regra violada no erro, o que justifica a boa prática.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 11 · Nomeando restrições"
+      }
+    },
+    {
+      "id": 11,
+      "tipo": "sql",
+      "topico": "Restrições e chaves",
+      "pergunta": "Qual alternativa é EQUIVALENTE à definição inline abaixo, mas com a chave estrangeira declarada no nível da tabela?",
+      "codigo": "CREATE TABLE pedidos (\n    id_pedido INT PRIMARY KEY,\n    id_cliente INT NOT NULL REFERENCES clientes(id_cliente)\n);",
+      "opcoesCodigo": true,
+      "opcoes": [
+        {
+          "texto": "CREATE TABLE pedidos (\n  id_pedido INT PRIMARY KEY,\n  id_cliente INT NOT NULL,\n  FOREIGN KEY (clientes) REFERENCES id_cliente\n);",
+          "porque": "A ordem está invertida: FOREIGN KEY (coluna_local) REFERENCES tabela(coluna)."
+        },
+        {
+          "texto": "CREATE TABLE pedidos (\n  id_pedido INT PRIMARY KEY,\n  id_cliente INT NOT NULL,\n  FOREIGN KEY (id_pedido) REFERENCES clientes(id_cliente)\n);",
+          "porque": "A FK está na coluna errada: id_pedido não referencia o cliente."
+        },
+        {
+          "texto": "CREATE TABLE pedidos (\n  id_pedido INT PRIMARY KEY,\n  id_cliente INT NOT NULL,\n  PRIMARY KEY (id_cliente) REFERENCES clientes(id_cliente)\n);",
+          "porque": "PRIMARY KEY não usa REFERENCES; o vínculo é feito por FOREIGN KEY."
+        },
+        {
+          "texto": "CREATE TABLE pedidos (\n  id_pedido INT PRIMARY KEY,\n  id_cliente INT NOT NULL UNIQUE,\n  FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente)\n);",
+          "porque": "UNIQUE impediria um cliente de ter mais de um pedido; o original não tem UNIQUE."
+        },
+        {
+          "texto": "CREATE TABLE pedidos (\n  id_pedido INT PRIMARY KEY,\n  id_cliente INT NOT NULL,\n  FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente)\n);",
+          "porque": ""
+        }
+      ],
+      "correta": 4,
+      "acerto": "FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) no final faz o mesmo que REFERENCES inline.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 5 e 11 · FOREIGN KEY e FOREIGN KEY inline"
+      }
+    },
+    {
+      "id": 12,
+      "tipo": "sql",
+      "topico": "Restrições e chaves",
+      "pergunta": "A tabela matriculas tem PRIMARY KEY (id_aluno, id_curso) e já contém os registros abaixo. Qual INSERT será REJEITADO?",
+      "tabelas": [
+        "matriculas"
+      ],
+      "opcoesCodigo": true,
+      "opcoes": [
+        {
+          "texto": "INSERT INTO matriculas (id_aluno, id_curso) VALUES (2, 20);",
+          "porque": "A combinação (2, 20) ainda não existe."
+        },
+        {
+          "texto": "INSERT INTO matriculas (id_aluno, id_curso) VALUES (3, 10);",
+          "porque": "A combinação (3, 10) ainda não existe (desde que o aluno 3 exista)."
+        },
+        {
+          "texto": "INSERT INTO matriculas (id_aluno, id_curso) VALUES (2, 30);",
+          "porque": "A combinação (2, 30) ainda não existe (desde que o curso 30 exista)."
+        },
+        {
+          "texto": "INSERT INTO matriculas (id_aluno, id_curso) VALUES (1, 20);",
+          "porque": ""
+        },
+        {
+          "texto": "Nenhum: id_aluno e id_curso podem se repetir livremente.",
+          "porque": "Cada coluna pode se repetir sozinha, mas a combinação das duas não."
+        }
+      ],
+      "correta": 3,
+      "acerto": "(1, 20) já existe; a chave composta impede a mesma combinação aluno + curso.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 7 e 8 · Chave primária composta (matriculas)"
+      }
+    },
+    {
+      "id": 13,
+      "tipo": "sql",
+      "topico": "Restrições e chaves",
+      "pergunta": "O estoque do produto 4 é 3. O que acontece ao executar o UPDATE?",
+      "codigo": "-- produtos: estoque INT DEFAULT 0 CHECK (estoque >= 0)\nUPDATE produtos\nSET estoque = estoque - 5\nWHERE id_produto = 4;",
+      "opcoes": [
+        {
+          "texto": "O estoque passa a ser -2.",
+          "porque": "CHECK (estoque >= 0) não aceita -2."
+        },
+        {
+          "texto": "O comando é rejeitado por violar a restrição CHECK, e o estoque continua 3.",
+          "porque": ""
+        },
+        {
+          "texto": "O estoque passa a ser 0, o menor valor permitido.",
+          "porque": "O banco não ajusta o valor: ele rejeita o comando."
+        },
+        {
+          "texto": "O estoque volta ao DEFAULT 0.",
+          "porque": "DEFAULT só é usado quando o valor não é informado no INSERT."
+        },
+        {
+          "texto": "O comando é rejeitado por violar a PRIMARY KEY.",
+          "porque": "A chave primária não foi alterada."
+        }
+      ],
+      "correta": 1,
+      "acerto": "A restrição CHECK vale também no UPDATE; o novo valor (-2) é recusado.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 10 · estoque INT DEFAULT 0 CHECK (estoque >= 0)"
+      }
+    },
+    {
+      "id": 14,
+      "tipo": "modelo",
+      "topico": "Modelo e relacionamentos",
+      "pergunta": "No modelo abaixo, qual tabela é a \"filha\" na relação entre clientes e pedidos, ou seja, a que guarda a chave estrangeira?",
+      "diagrama": "er-vendas",
+      "opcoes": [
+        {
+          "texto": "pedidos, porque possui id_cliente como FK.",
+          "porque": ""
+        },
+        {
+          "texto": "clientes, porque id_cliente é a chave primária dela.",
+          "porque": "A tabela que tem a PK referenciada é a tabela pai."
+        },
+        {
+          "texto": "itens_pedido, porque está ligada a todas as tabelas.",
+          "porque": "itens_pedido não se liga diretamente a clientes."
+        },
+        {
+          "texto": "produtos, porque possui preço.",
+          "porque": "produtos não tem relação direta com clientes."
+        },
+        {
+          "texto": "Nenhuma: as duas são independentes.",
+          "porque": "pedidos.id_cliente → clientes.id_cliente cria o vínculo."
+        }
+      ],
+      "correta": 0,
+      "acerto": "A tabela filha contém a FK (pedidos.id_cliente) que aponta para a PK da tabela pai (clientes).",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 5 · FOREIGN KEY e integridade referencial"
+      }
+    },
+    {
+      "id": 15,
+      "tipo": "modelo",
+      "topico": "Modelo e relacionamentos",
+      "pergunta": "Pelo modelo, quantos pedidos um cliente pode ter, e quantos clientes um pedido pode ter?",
+      "diagrama": "er-vendas",
+      "opcoes": [
+        {
+          "texto": "Um cliente: no máximo 1 pedido; um pedido: vários clientes.",
+          "porque": "Está invertido: a FK fica em pedidos, logo cada pedido aponta para um único cliente."
+        },
+        {
+          "texto": "Um cliente: vários pedidos; um pedido: vários clientes.",
+          "porque": "Isso seria N:N e exigiria uma tabela associativa entre eles."
+        },
+        {
+          "texto": "Um cliente: vários pedidos; um pedido: um único cliente.",
+          "porque": ""
+        },
+        {
+          "texto": "Um cliente: exatamente 1 pedido; um pedido: exatamente 1 cliente.",
+          "porque": "Nada impede que vários pedidos tenham o mesmo id_cliente."
+        },
+        {
+          "texto": "Não é possível saber sem os dados.",
+          "porque": "A posição da FK define a cardinalidade 1:N."
+        }
+      ],
+      "correta": 2,
+      "acerto": "Cada pedido guarda um id_cliente; vários pedidos podem repetir o mesmo id_cliente (1:N).",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 5 · FOREIGN KEY (relacionamentos 1:1 e 1:N)"
+      }
+    },
+    {
+      "id": 16,
+      "tipo": "modelo",
+      "topico": "Modelo e relacionamentos",
+      "pergunta": "Com as chaves estrangeiras do modelo ativas e as tabelas vazias, em que ordem os INSERTs devem ser feitos para não violar nenhuma FK?",
+      "diagrama": "er-vendas",
+      "opcoes": [
+        {
+          "texto": "itens_pedido → pedidos → clientes → produtos",
+          "porque": "itens_pedido referencia pedidos e produtos, que ainda não existem."
+        },
+        {
+          "texto": "pedidos → clientes → produtos → itens_pedido",
+          "porque": "O pedido referencia um cliente que ainda não foi inserido."
+        },
+        {
+          "texto": "clientes → itens_pedido → pedidos → produtos",
+          "porque": "itens_pedido viria antes do pedido e do produto que referencia."
+        },
+        {
+          "texto": "produtos → itens_pedido → clientes → pedidos",
+          "porque": "itens_pedido viria antes do pedido que referencia."
+        },
+        {
+          "texto": "clientes → pedidos → produtos → itens_pedido",
+          "porque": ""
+        }
+      ],
+      "correta": 4,
+      "acerto": "Primeiro as tabelas pai; itens_pedido, que depende de pedidos e produtos, vem por último.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 5 e 6 · FOREIGN KEY garante que o valor exista na tabela referenciada"
+      }
+    },
+    {
+      "id": 17,
+      "tipo": "modelo",
+      "topico": "Modelo e relacionamentos",
+      "pergunta": "Por que itens_pedido usa PRIMARY KEY (id_pedido, id_produto)?",
+      "diagrama": "er-vendas",
+      "opcoes": [
+        {
+          "texto": "Porque toda chave estrangeira precisa fazer parte da chave primária.",
+          "porque": "Em pedidos, id_cliente é FK e não faz parte da PK."
+        },
+        {
+          "texto": "Para que cada produto só possa ser vendido em um único pedido.",
+          "porque": "O produto 5 pode estar em vários pedidos; só não pode repetir dentro do mesmo pedido."
+        },
+        {
+          "texto": "Para que cada pedido tenha apenas um produto.",
+          "porque": "O pedido 1 pode ter os produtos 5, 6, 7..."
+        },
+        {
+          "texto": "Para que um mesmo produto apareça no máximo uma vez em cada pedido.",
+          "porque": ""
+        },
+        {
+          "texto": "Para permitir quantidade NULL.",
+          "porque": "A chave primária não tem relação com quantidade."
+        }
+      ],
+      "correta": 3,
+      "acerto": "A combinação (pedido, produto) é única: o produto aparece uma vez por pedido, com sua quantidade.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 8 e 9 · Exemplo 2: itens_pedido"
+      }
+    },
+    {
+      "id": 18,
+      "tipo": "assercao",
+      "topico": "Modelo e relacionamentos",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "afirmativa": "A tabela matriculas permite representar que um aluno cursa vários cursos e que um curso tem vários alunos.",
+      "razao": "Um relacionamento muitos-para-muitos (N:N) é implementado por uma tabela associativa com duas chaves estrangeiras.",
+      "diagrama": "er-escola",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": ""
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        }
+      ],
+      "correta": 0,
+      "acerto": "matriculas é a tabela associativa que resolve o N:N entre alunos e cursos.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 7 · Exemplo 1: matrículas em cursos"
+      }
+    },
+    {
+      "id": 19,
+      "tipo": "modelo",
+      "topico": "Modelo e relacionamentos",
+      "pergunta": "Qual comando cria a tabela livros exatamente como o diagrama e os requisitos indicam?",
+      "diagrama": "er-biblioteca",
+      "opcoesCodigo": true,
+      "opcoes": [
+        {
+          "texto": "CREATE TABLE livros (\n  id_livro INT PRIMARY KEY,\n  titulo VARCHAR(150) NOT NULL,\n  ano INT CHECK (ano >= 1500),\n  id_autor INT REFERENCES autores(id_autor)\n);",
+          "porque": "Falta NOT NULL em id_autor, que é obrigatório."
+        },
+        {
+          "texto": "CREATE TABLE livros (\n  id_livro INT PRIMARY KEY,\n  titulo VARCHAR(150) NOT NULL,\n  ano INT CHECK (ano >= 1500),\n  id_autor INT NOT NULL REFERENCES autores(id_autor)\n);",
+          "porque": ""
+        },
+        {
+          "texto": "CREATE TABLE livros (\n  id_livro INT PRIMARY KEY,\n  titulo VARCHAR(150) NOT NULL,\n  ano INT DEFAULT 1500,\n  id_autor INT NOT NULL REFERENCES autores(id_autor)\n);",
+          "porque": "DEFAULT 1500 não impede anos menores; era preciso CHECK."
+        },
+        {
+          "texto": "CREATE TABLE livros (\n  id_livro INT PRIMARY KEY,\n  titulo VARCHAR(150) NOT NULL,\n  ano INT CHECK (ano >= 1500),\n  id_autor INT NOT NULL REFERENCES livros(id_livro)\n);",
+          "porque": "A FK aponta para a própria tabela; deveria referenciar autores(id_autor)."
+        },
+        {
+          "texto": "CREATE TABLE livros (\n  id_livro INT,\n  titulo VARCHAR(150) NOT NULL,\n  ano INT CHECK (ano >= 1500),\n  id_autor INT NOT NULL PRIMARY KEY REFERENCES autores(id_autor)\n);",
+          "porque": "A PK deveria ser id_livro. Com PK em id_autor, cada autor teria só um livro."
+        }
+      ],
+      "correta": 1,
+      "acerto": "PK em id_livro, NOT NULL em titulo e id_autor, CHECK no ano e FK para autores.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 11 e 13 · FOREIGN KEY inline e resumo da sintaxe inline"
+      }
+    },
+    {
+      "id": 20,
+      "tipo": "modelo",
+      "topico": "Modelo e relacionamentos",
+      "pergunta": "Pelo modelo, o que significa a coluna departamento_id aceitar NULL?",
+      "diagrama": "er-rh",
+      "opcoes": [
+        {
+          "texto": "Que pode existir funcionário sem departamento associado.",
+          "porque": ""
+        },
+        {
+          "texto": "Que todo departamento precisa ter ao menos um funcionário.",
+          "porque": "A FK está em funcionarios; ela não obriga o departamento a ter alguém."
+        },
+        {
+          "texto": "Que o departamento pode ser excluído sem nenhuma verificação.",
+          "porque": "Sem ON DELETE, o padrão (RESTRICT/NO ACTION) impede excluir um departamento com funcionários."
+        },
+        {
+          "texto": "Que departamento_id deixa de ser chave estrangeira.",
+          "porque": "Continua sendo FK; apenas o valor é opcional."
+        },
+        {
+          "texto": "Que o funcionário pode apontar para um departamento inexistente, como 99.",
+          "porque": "A FK só aceita valores existentes (ou NULL)."
+        }
+      ],
+      "correta": 0,
+      "acerto": "Sem NOT NULL a FK é opcional: departamento_id pode ser NULL (funcionário sem departamento).",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 4 · IS NULL: funcionários sem departamento"
+      }
+    },
+    {
+      "id": 21,
+      "tipo": "sql",
+      "topico": "ON DELETE / ON UPDATE",
+      "pergunta": "A FK de pedidos foi criada SEM ON DELETE e SEM ON UPDATE. O cliente 1 possui 2 pedidos. O que acontece?",
+      "codigo": "CREATE TABLE pedidos (\n    id_pedido INT PRIMARY KEY,\n    id_cliente INT NOT NULL,\n    valor_total DECIMAL(10,2) NOT NULL CHECK (valor_total >= 0),\n    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente)\n);\n\nDELETE FROM clientes WHERE id_cliente = 1;",
+      "opcoes": [
+        {
+          "texto": "O cliente e seus 2 pedidos são excluídos.",
+          "porque": "Isso exigiria ON DELETE CASCADE."
+        },
+        {
+          "texto": "O cliente é excluído e os pedidos ficam com id_cliente = NULL.",
+          "porque": "Isso exigiria ON DELETE SET NULL."
+        },
+        {
+          "texto": "A exclusão é impedida com erro de violação de chave estrangeira.",
+          "porque": ""
+        },
+        {
+          "texto": "O cliente é excluído e os pedidos continuam apontando para o id 1.",
+          "porque": "A integridade referencial impede pedidos órfãos."
+        },
+        {
+          "texto": "A exclusão é adiada até o cliente não ter pedidos.",
+          "porque": "O SGBD não agenda a operação; ele a rejeita."
+        }
+      ],
+      "correta": 2,
+      "acerto": "Sem ação especificada vale RESTRICT/NO ACTION: o SGBD impede a exclusão.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 14 e 15 · Exemplo 1: sem CASCADE"
+      }
+    },
+    {
+      "id": 22,
+      "tipo": "sql",
+      "topico": "ON DELETE / ON UPDATE",
+      "pergunta": "Após executar todo o script, qual valor o último SELECT retorna?",
+      "codigo": "-- pedidos: FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE CASCADE\nINSERT INTO clientes VALUES (1, 'Ana', 'ana@x.com'), (2, 'Bia', 'bia@x.com');\nINSERT INTO pedidos (id_pedido, id_cliente, valor_total)\nVALUES (10, 1, 50), (11, 1, 70), (12, 2, 30);\n\nDELETE FROM clientes WHERE id_cliente = 1;\n\nSELECT COUNT(*) FROM pedidos;",
+      "opcoes": [
+        {
+          "texto": "3",
+          "porque": "O CASCADE removeu os pedidos do cliente 1."
+        },
+        {
+          "texto": "2",
+          "porque": "Dois pedidos eram do cliente 1 e foram excluídos; sobra 1."
+        },
+        {
+          "texto": "1",
+          "porque": ""
+        },
+        {
+          "texto": "0",
+          "porque": "O pedido 12 pertence ao cliente 2 e não é afetado."
+        },
+        {
+          "texto": "Erro: não é possível excluir cliente com pedidos.",
+          "porque": "Com ON DELETE CASCADE a exclusão é permitida e propagada."
+        }
+      ],
+      "correta": 2,
+      "acerto": "ON DELETE CASCADE apaga os pedidos 10 e 11 do cliente 1; resta o pedido 12.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 15 e 16 · Exemplo 2: ON DELETE CASCADE"
+      }
+    },
+    {
+      "id": 23,
+      "tipo": "sql",
+      "topico": "ON DELETE / ON UPDATE",
+      "pergunta": "Qual é o problema na definição da tabela abaixo?",
+      "codigo": "CREATE TABLE pedidos (\n    id_pedido INT PRIMARY KEY,\n    id_cliente INT NOT NULL,\n    valor_total DECIMAL(10,2) NOT NULL CHECK (valor_total >= 0),\n    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE SET NULL\n);",
+      "opcoes": [
+        {
+          "texto": "ON DELETE SET NULL só pode ser usado com chave primária composta.",
+          "porque": "Não há essa exigência."
+        },
+        {
+          "texto": "valor_total não pode ter CHECK e NOT NULL juntos.",
+          "porque": "As duas restrições podem coexistir na mesma coluna."
+        },
+        {
+          "texto": "Não há problema: o SGBD ignora o NOT NULL quando necessário.",
+          "porque": "As restrições continuam valendo; as duas regras entram em conflito."
+        },
+        {
+          "texto": "FOREIGN KEY não pode ter ON DELETE quando declarada no final da tabela.",
+          "porque": "A apostila mostra ON DELETE em FKs no nível da tabela."
+        },
+        {
+          "texto": "SET NULL precisa de NULL na FK, mas id_cliente foi declarado NOT NULL.",
+          "porque": ""
+        }
+      ],
+      "correta": 4,
+      "acerto": "Para usar SET NULL, a coluna da FK na tabela filha precisa aceitar NULL.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 17 e 18 · Exemplo 4: ON DELETE SET NULL (observações)"
+      }
+    },
+    {
+      "id": 24,
+      "tipo": "sql",
+      "topico": "ON DELETE / ON UPDATE",
+      "pergunta": "A FK de pedidos tem apenas ON UPDATE CASCADE. Existem pedidos do cliente 2. Qual é o efeito do comando?",
+      "codigo": "UPDATE clientes SET id_cliente = 20 WHERE id_cliente = 2;",
+      "opcoes": [
+        {
+          "texto": "Erro: chaves primárias nunca podem ser atualizadas.",
+          "porque": "Podem; com ON UPDATE CASCADE a mudança é propagada."
+        },
+        {
+          "texto": "O cliente passa a ter id 20, e os pedidos continuam com id_cliente = 2.",
+          "porque": "Isso deixaria pedidos órfãos; o CASCADE os atualiza."
+        },
+        {
+          "texto": "O cliente passa a ter id 20, e os pedidos ficam com id_cliente = NULL.",
+          "porque": "Isso seria SET NULL, não CASCADE."
+        },
+        {
+          "texto": "O cliente passa a ter id 20, e os pedidos dele também passam a ter id_cliente = 20.",
+          "porque": ""
+        },
+        {
+          "texto": "Os pedidos do cliente 2 são excluídos.",
+          "porque": "ON UPDATE CASCADE atualiza; não exclui."
+        }
+      ],
+      "correta": 3,
+      "acerto": "ON UPDATE CASCADE propaga a nova chave para os registros filhos.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 16 e 17 · Exemplo 3: ON UPDATE CASCADE"
+      }
+    },
+    {
+      "id": 25,
+      "tipo": "vf",
+      "topico": "ON DELETE / ON UPDATE",
+      "pergunta": "Se a FK foi declarada apenas com ON DELETE CASCADE, um UPDATE que altere a chave primária de um cliente com pedidos também será propagado em cascata.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": "ON DELETE só trata exclusões. Sem ON UPDATE, o padrão (RESTRICT/NO ACTION) impede a atualização."
+        },
+        {
+          "texto": "Falso",
+          "porque": ""
+        }
+      ],
+      "correta": 1,
+      "acerto": "Cada cláusula é independente. Sem ON UPDATE, vale o padrão: a atualização é impedida.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 16 · Exemplo 2: comportamento na atualização"
+      }
+    },
+    {
+      "id": 26,
+      "tipo": "multipla",
+      "topico": "ON DELETE / ON UPDATE",
+      "pergunta": "Regra de negócio: \"ao excluir uma categoria, os produtos devem continuar cadastrados, apenas sem categoria\". Qual ação usar na FK produtos.id_categoria?",
+      "opcoes": [
+        {
+          "texto": "ON DELETE CASCADE",
+          "porque": "CASCADE apagaria os produtos da categoria."
+        },
+        {
+          "texto": "ON DELETE SET NULL",
+          "porque": ""
+        },
+        {
+          "texto": "ON DELETE NO ACTION",
+          "porque": "NO ACTION também impede a exclusão (verificação no fim da transação)."
+        },
+        {
+          "texto": "ON UPDATE CASCADE",
+          "porque": "Trata atualização da chave, não exclusão."
+        },
+        {
+          "texto": "ON DELETE RESTRICT",
+          "porque": "RESTRICT impediria excluir a categoria."
+        }
+      ],
+      "correta": 1,
+      "acerto": "SET NULL mantém o produto e remove o vínculo (id_categoria = NULL).",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 17 e 18 · ON DELETE SET NULL"
+      }
+    },
+    {
+      "id": 27,
+      "tipo": "assercao",
+      "topico": "ON DELETE / ON UPDATE",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "afirmativa": "Uma FK declarada com ON DELETE RESTRICT impede a exclusão de um registro pai que tenha filhos.",
+      "razao": "NO ACTION é idêntico a RESTRICT em todos os SGBDs, inclusive no momento em que a verificação é feita.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": "A I é verdadeira, mas a II é falsa. NO ACTION é semelhante, mas a verificação pode ser feita no fim da transação."
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": "A I é verdadeira, mas a II é falsa. NO ACTION é semelhante, mas a verificação pode ser feita no fim da transação."
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": ""
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": "A I é verdadeira, mas a II é falsa. NO ACTION é semelhante, mas a verificação pode ser feita no fim da transação."
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "A I é verdadeira, mas a II é falsa. NO ACTION é semelhante, mas a verificação pode ser feita no fim da transação."
+        }
+      ],
+      "correta": 2,
+      "acerto": "A I está correta. A II é falsa: em NO ACTION a verificação pode ser adiada até o fim da transação.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Páginas 14 e 19 · RESTRICT, NO ACTION e resumo"
+      }
+    },
+    {
+      "id": 28,
+      "tipo": "modelo",
+      "topico": "ON DELETE / ON UPDATE",
+      "pergunta": "No modelo de vendas, itens_pedido foi criada com ON DELETE CASCADE apenas na FK para pedidos (a FK para produtos não tem ação). O produto 5 aparece em itens de 3 pedidos. O que acontece em DELETE FROM produtos WHERE id_produto = 5?",
+      "diagrama": "er-vendas",
+      "opcoes": [
+        {
+          "texto": "A exclusão é impedida, pois há itens referenciando o produto.",
+          "porque": ""
+        },
+        {
+          "texto": "O produto, os 3 itens e os 3 pedidos são excluídos.",
+          "porque": "A exclusão não sobe para pedidos; e a FK de produtos nem permite."
+        },
+        {
+          "texto": "O produto é excluído e os itens ficam com id_produto = NULL.",
+          "porque": "Não há SET NULL; e id_produto faz parte da PK, que não aceita NULL."
+        },
+        {
+          "texto": "O produto e os 3 itens são excluídos.",
+          "porque": "O CASCADE está na FK de pedidos, não na de produtos."
+        },
+        {
+          "texto": "O produto é excluído e os itens permanecem apontando para o 5.",
+          "porque": "A integridade referencial não permite referência a produto inexistente."
+        }
+      ],
+      "correta": 0,
+      "acerto": "Sem ação na FK de produtos vale o comportamento padrão: a exclusão do pai é bloqueada.",
+      "fonte": {
+        "titulo": "Apostila — DDL (Linguagem de Definição de Dados)",
+        "local": "Página 9 · FKs de itens_pedido"
+      }
+    },
+    {
+      "id": 29,
+      "tipo": "sql",
+      "topico": "DML e transações",
+      "pergunta": "A tabela funcionarios tem id SERIAL (gerado automaticamente), salario sem DEFAULT e cargo VARCHAR(50). O que acontece com o comando?",
+      "codigo": "INSERT INTO funcionarios (nome, cargo)\nVALUES ('Gerente', 'Maria Santos');",
+      "opcoes": [
+        {
+          "texto": "Erro de sintaxe: os valores estão na ordem errada.",
+          "porque": "Os dois são textos; o SGBD não sabe qual é nome e qual é cargo."
+        },
+        {
+          "texto": "O registro é inserido com nome = 'Maria Santos' e cargo = 'Gerente'.",
+          "porque": "Os valores seguem a ordem da lista de colunas, não o significado."
+        },
+        {
+          "texto": "O registro é inserido com nome = 'Gerente' e cargo = 'Maria Santos'.",
+          "porque": ""
+        },
+        {
+          "texto": "Erro, porque salario não foi informado.",
+          "porque": "Sem NOT NULL, a coluna omitida recebe DEFAULT ou NULL."
+        },
+        {
+          "texto": "Nada é inserido, porque falta o WHERE.",
+          "porque": "INSERT não usa WHERE."
+        }
+      ],
+      "correta": 2,
+      "acerto": "Os valores são associados posição a posição: 1º valor → 1ª coluna listada.",
+      "fonte": {
+        "titulo": "Apostila — DML (Data Manipulation Language)",
+        "local": "Páginas 1 e 2 · Sintaxe do INSERT"
+      }
+    },
+    {
+      "id": 30,
+      "tipo": "sql",
+      "topico": "DML e transações",
+      "pergunta": "O que acontece ao executar este INSERT?",
+      "codigo": "INSERT INTO funcionarios (id, nome, cargo, salario)\nVALUES (7, 'Lia', 'Analista');",
+      "opcoes": [
+        {
+          "texto": "Insere a linha com salario = NULL.",
+          "porque": "Não há valor sobrando: são 4 colunas e 3 valores."
+        },
+        {
+          "texto": "Insere a linha preenchendo o salário com 0.",
+          "porque": "O SGBD não completa valores faltantes da lista."
+        },
+        {
+          "texto": "Erro porque o id deveria vir por último.",
+          "porque": "A ordem das colunas é escolhida no próprio comando."
+        },
+        {
+          "texto": "Insere a linha, ignorando a coluna salario.",
+          "porque": "salario está na lista, então precisa de valor."
+        },
+        {
+          "texto": "Erro: a quantidade de valores é diferente da quantidade de colunas.",
+          "porque": ""
+        }
+      ],
+      "correta": 4,
+      "acerto": "Cada coluna da lista precisa de um valor correspondente em VALUES.",
+      "fonte": {
+        "titulo": "Apostila — DML (Data Manipulation Language)",
+        "local": "Página 1 · INSERT INTO tabela (colunas) VALUES (valores)"
+      }
+    },
+    {
+      "id": 31,
+      "tipo": "sql",
+      "topico": "DML e transações",
+      "pergunta": "Com a tabela funcionarios abaixo, qual valor o SELECT retorna depois do UPDATE?",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "UPDATE funcionarios\nSET salario = salario * 1.1\nWHERE departamento_id = 10;\n\nSELECT SUM(salario) FROM funcionarios WHERE departamento_id = 10;",
+      "opcoes": [
+        {
+          "texto": "9000.00",
+          "porque": "Essa é a soma antes do aumento de 10%."
+        },
+        {
+          "texto": "9900.00",
+          "porque": ""
+        },
+        {
+          "texto": "6600.00",
+          "porque": "Esse seria o novo salário só do Bruno."
+        },
+        {
+          "texto": "20700.00",
+          "porque": "Essa é a soma de todos, sem aumento."
+        },
+        {
+          "texto": "21600.00",
+          "porque": "O aumento só vale para o departamento 10."
+        }
+      ],
+      "correta": 1,
+      "acerto": "Ana 3000 → 3300 e Bruno 6000 → 6600: 3300 + 6600 = 9900.",
+      "fonte": {
+        "titulo": "Apostila — DML (Data Manipulation Language)",
+        "local": "Página 2 · UPDATE com aumento de 10%"
+      }
+    },
+    {
+      "id": 32,
+      "tipo": "sql",
+      "topico": "DML e transações",
+      "pergunta": "Um estagiário executou o comando abaixo na tabela de funcionários (6 linhas). Quantas linhas foram alteradas?",
+      "codigo": "UPDATE funcionarios\nSET cargo = 'Analista';",
+      "opcoes": [
+        {
+          "texto": "Nenhuma: falta WHERE, então o comando é inválido.",
+          "porque": "WHERE é opcional. Sem ele, todas as linhas são atingidas."
+        },
+        {
+          "texto": "1, a primeira linha da tabela.",
+          "porque": "O UPDATE não para na primeira linha."
+        },
+        {
+          "texto": "Só as que tinham cargo diferente de 'Analista'.",
+          "porque": "Não há condição; todas são alteradas, inclusive as que já eram Analista."
+        },
+        {
+          "texto": "6",
+          "porque": ""
+        },
+        {
+          "texto": "Erro: é preciso informar a chave primária.",
+          "porque": "O UPDATE não exige a chave primária."
+        }
+      ],
+      "correta": 3,
+      "acerto": "Sem WHERE, o UPDATE afeta todas as linhas. Por isso a boa prática é sempre usar WHERE.",
+      "fonte": {
+        "titulo": "Apostila — DML (Data Manipulation Language)",
+        "local": "Páginas 2 e 4 · Sintaxe do UPDATE e boas práticas"
+      }
+    },
+    {
+      "id": 33,
+      "tipo": "sql",
+      "topico": "DML e transações",
+      "pergunta": "Qual é a forma correta de alterar, no mesmo comando, o salário para 4000 e o cargo para 'Coordenador' do funcionário 3?",
+      "opcoesCodigo": true,
+      "opcoes": [
+        {
+          "texto": "UPDATE funcionarios\nSET salario = 4000 AND cargo = 'Coordenador'\nWHERE id = 3;",
+          "porque": "AND não separa atribuições; ele vira uma expressão lógica atribuída ao salário."
+        },
+        {
+          "texto": "UPDATE funcionarios\nSET salario = 4000, cargo = 'Coordenador'\nWHERE id = 3;",
+          "porque": ""
+        },
+        {
+          "texto": "UPDATE funcionarios (salario, cargo)\nVALUES (4000, 'Coordenador')\nWHERE id = 3;",
+          "porque": "VALUES é sintaxe do INSERT; o UPDATE usa SET."
+        },
+        {
+          "texto": "UPDATE funcionarios\nWHERE id = 3\nSET salario = 4000, cargo = 'Coordenador';",
+          "porque": "A ordem correta é UPDATE … SET … WHERE."
+        },
+        {
+          "texto": "UPDATE SET salario = 4000, cargo = 'Coordenador'\nFROM funcionarios WHERE id = 3;",
+          "porque": "O nome da tabela vem logo após UPDATE."
+        }
+      ],
+      "correta": 1,
+      "acerto": "SET coluna1 = valor1, coluna2 = valor2 — atribuições separadas por vírgula.",
+      "fonte": {
+        "titulo": "Apostila — DML (Data Manipulation Language)",
+        "local": "Página 2 · Sintaxe básica do UPDATE"
+      }
+    },
+    {
+      "id": 34,
+      "tipo": "sql",
+      "topico": "DML e transações",
+      "pergunta": "Com a tabela funcionarios abaixo, quantas linhas restam depois do DELETE?",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "DELETE FROM funcionarios\nWHERE departamento_id = 20;",
+      "opcoes": [
+        {
+          "texto": "0",
+          "porque": "Só os do departamento 20 são excluídos."
+        },
+        {
+          "texto": "2",
+          "porque": "Hugo (departamento NULL) não é excluído: NULL não é igual a 20."
+        },
+        {
+          "texto": "3",
+          "porque": ""
+        },
+        {
+          "texto": "4",
+          "porque": "O departamento 20 tem três funcionários: Carla, Diego e Elisa."
+        },
+        {
+          "texto": "6",
+          "porque": "O DELETE com WHERE remove as linhas que satisfazem a condição."
+        }
+      ],
+      "correta": 2,
+      "acerto": "Carla, Diego e Elisa saem; ficam Ana, Bruno e Hugo.",
+      "fonte": {
+        "titulo": "Apostila — DML (Data Manipulation Language)",
+        "local": "Página 3 · DELETE de um departamento específico"
+      }
+    },
+    {
+      "id": 35,
+      "tipo": "assercao",
+      "topico": "DML e transações",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "afirmativa": "DELETE FROM funcionarios; (sem WHERE) remove todas as linhas, mas a tabela continua existindo no banco.",
+      "razao": "DELETE é um comando DML: manipula registros, e não a estrutura da tabela.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": ""
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        }
+      ],
+      "correta": 0,
+      "acerto": "Por ser DML, o DELETE apaga dados; a estrutura (criada com DDL) permanece.",
+      "fonte": {
+        "titulo": "Apostila — DML (Data Manipulation Language)",
+        "local": "Página 3 · Comando DELETE"
+      }
+    },
+    {
+      "id": 36,
+      "tipo": "sql",
+      "topico": "DML e transações",
+      "pergunta": "As contas começam com os saldos abaixo. Quais são os saldos das contas 1 e 2 ao final do script?",
+      "tabelas": [
+        "contas"
+      ],
+      "codigo": "BEGIN;\nUPDATE contas SET saldo = saldo - 100 WHERE id = 1;\nUPDATE contas SET saldo = saldo + 100 WHERE id = 2;\nROLLBACK;",
+      "opcoes": [
+        {
+          "texto": "400.00 e 300.00",
+          "porque": "O ROLLBACK desfez as duas atualizações."
+        },
+        {
+          "texto": "400.00 e 200.00",
+          "porque": "As duas atualizações estão na mesma transação e foram desfeitas juntas."
+        },
+        {
+          "texto": "500.00 e 300.00",
+          "porque": "As duas atualizações foram revertidas."
+        },
+        {
+          "texto": "500.00 e 200.00",
+          "porque": ""
+        },
+        {
+          "texto": "Erro: não se pode usar ROLLBACK depois de UPDATE.",
+          "porque": "ROLLBACK existe justamente para desfazer alterações da transação."
+        }
+      ],
+      "correta": 3,
+      "acerto": "ROLLBACK reverte tudo o que foi feito desde o BEGIN.",
+      "fonte": {
+        "titulo": "Apostila — DML (Data Manipulation Language)",
+        "local": "Páginas 3 e 4 · Transações (BEGIN, COMMIT, ROLLBACK)"
+      }
+    },
+    {
+      "id": 37,
+      "tipo": "multipla",
+      "topico": "SELECT e filtros",
+      "pergunta": "Qual sequência de cláusulas respeita a sintaxe do SELECT?",
+      "opcoes": [
+        {
+          "texto": "SELECT … FROM … WHERE … GROUP BY … HAVING … ORDER BY",
+          "porque": ""
+        },
+        {
+          "texto": "SELECT … WHERE … FROM … GROUP BY … HAVING … ORDER BY",
+          "porque": "FROM vem logo após SELECT."
+        },
+        {
+          "texto": "SELECT … FROM … WHERE … HAVING … GROUP BY … ORDER BY",
+          "porque": "HAVING filtra grupos, então vem depois de GROUP BY."
+        },
+        {
+          "texto": "SELECT … FROM … GROUP BY … WHERE … ORDER BY … HAVING",
+          "porque": "WHERE vem antes de GROUP BY; HAVING vem antes de ORDER BY."
+        },
+        {
+          "texto": "FROM … SELECT … WHERE … ORDER BY … GROUP BY … HAVING",
+          "porque": "A consulta começa com SELECT, e ORDER BY é a última cláusula."
+        }
+      ],
+      "correta": 0,
+      "acerto": "SELECT, FROM, WHERE, GROUP BY, HAVING, ORDER BY.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 1 · Sintaxe básica do SELECT"
+      }
+    },
+    {
+      "id": 38,
+      "tipo": "sql",
+      "topico": "SELECT e filtros",
+      "pergunta": "Quantas linhas o SELECT retorna? (Cada _ representa exatamente um caractere.)",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "SELECT nome\nFROM funcionarios\nWHERE nome LIKE '_____';",
+      "opcoes": [
+        {
+          "texto": "0",
+          "porque": "Há vários nomes com 5 letras."
+        },
+        {
+          "texto": "1",
+          "porque": "Não é só um: confira o tamanho de cada nome."
+        },
+        {
+          "texto": "2",
+          "porque": "Bruno, Carla, Diego e Elisa têm 5 letras."
+        },
+        {
+          "texto": "4",
+          "porque": ""
+        },
+        {
+          "texto": "6",
+          "porque": "Ana (3) e Hugo (4) não têm 5 caracteres."
+        }
+      ],
+      "correta": 3,
+      "acerto": "Cinco '_' = exatamente 5 caracteres: Bruno, Carla, Diego e Elisa.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Páginas 3 e 4 · LIKE com o curinga _"
+      }
+    },
+    {
+      "id": 39,
+      "tipo": "sql",
+      "topico": "SELECT e filtros",
+      "pergunta": "No PostgreSQL, qual é a diferença entre os resultados das duas consultas sobre a tabela pessoas?",
+      "tabelas": [
+        "nomes"
+      ],
+      "codigo": "-- (1)\nSELECT nome FROM pessoas WHERE nome LIKE '%ana%';\n\n-- (2)\nSELECT nome FROM pessoas WHERE nome ILIKE '%ana%';",
+      "opcoes": [
+        {
+          "texto": "Nenhuma: as duas retornam os 5 nomes.",
+          "porque": "Daniel não contém 'ana'; e LIKE diferencia maiúsculas de minúsculas."
+        },
+        {
+          "texto": "(1) retorna Ana, Joana e Mariana; (2) retorna os 5 nomes.",
+          "porque": "LIKE não acha 'Ana' com A maiúsculo, e 'Daniel' não contém 'ana'."
+        },
+        {
+          "texto": "(1) retorna Joana e Mariana; (2) retorna Ana, ANA, Joana e Mariana.",
+          "porque": ""
+        },
+        {
+          "texto": "(1) retorna Ana e ANA; (2) retorna Joana e Mariana.",
+          "porque": "Está invertido: ILIKE é o que ignora maiúsculas/minúsculas."
+        },
+        {
+          "texto": "(2) gera erro: ILIKE não existe.",
+          "porque": "ILIKE é uma extensão do PostgreSQL."
+        }
+      ],
+      "correta": 2,
+      "acerto": "LIKE diferencia maiúsculas; ILIKE não. 'Daniel' não contém a sequência 'ana'.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 4 · ILIKE (case-insensitive)"
+      }
+    },
+    {
+      "id": 40,
+      "tipo": "sql",
+      "topico": "SELECT e filtros",
+      "pergunta": "Quais funcionários são retornados?",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "SELECT nome\nFROM funcionarios\nWHERE salario BETWEEN 3000 AND 5000;",
+      "opcoes": [
+        {
+          "texto": "Carla apenas",
+          "porque": "BETWEEN inclui os limites: 3000 e 5000 também entram."
+        },
+        {
+          "texto": "Ana e Carla",
+          "porque": "Elisa, com 5000, também está no intervalo (limite incluído)."
+        },
+        {
+          "texto": "Carla e Elisa",
+          "porque": "Ana, com 3000, também está no intervalo (limite incluído)."
+        },
+        {
+          "texto": "Ana, Bruno, Carla e Elisa",
+          "porque": "Bruno tem 6000, acima do limite superior."
+        },
+        {
+          "texto": "Ana, Carla e Elisa",
+          "porque": ""
+        }
+      ],
+      "correta": 4,
+      "acerto": "BETWEEN 3000 AND 5000 equivale a salario >= 3000 AND salario <= 5000.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 3 · BETWEEN"
+      }
+    },
+    {
+      "id": 41,
+      "tipo": "sql",
+      "topico": "SELECT e filtros",
+      "pergunta": "Quantas linhas a consulta retorna?",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "SELECT nome\nFROM funcionarios\nWHERE departamento_id = NULL;",
+      "opcoes": [
+        {
+          "texto": "0",
+          "porque": ""
+        },
+        {
+          "texto": "1",
+          "porque": "Hugo tem departamento_id NULL, mas a comparação '= NULL' não é verdadeira nem para ele."
+        },
+        {
+          "texto": "5",
+          "porque": "A condição não seleciona quem tem departamento."
+        },
+        {
+          "texto": "6",
+          "porque": "A condição não é ignorada; ela nunca resulta em verdadeiro."
+        },
+        {
+          "texto": "Erro de sintaxe.",
+          "porque": "O comando é aceito; ele só não encontra linhas."
+        }
+      ],
+      "correta": 0,
+      "acerto": "Comparar com NULL usando = resulta em desconhecido. O certo é IS NULL (que retornaria Hugo).",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 4 · IS NULL"
+      }
+    },
+    {
+      "id": 42,
+      "tipo": "sql",
+      "topico": "SELECT e filtros",
+      "pergunta": "Atenção à precedência: AND é avaliado antes de OR. Quais nomes são retornados?",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "SELECT nome\nFROM funcionarios\nWHERE cargo = 'Gerente'\n   OR cargo = 'Analista' AND salario > 5500;",
+      "opcoes": [
+        {
+          "texto": "Bruno",
+          "porque": "Sem parênteses, Elisa (Gerente) também entra pela parte do OR."
+        },
+        {
+          "texto": "Nenhum",
+          "porque": "Os gerentes satisfazem a primeira parte do OR."
+        },
+        {
+          "texto": "Bruno, Elisa e Carla",
+          "porque": "Carla é Analista, mas ganha 3500, menos que 5500."
+        },
+        {
+          "texto": "Bruno e Elisa",
+          "porque": ""
+        },
+        {
+          "texto": "Ana, Bruno, Carla e Elisa",
+          "porque": "A condição de salário vale para os analistas."
+        }
+      ],
+      "correta": 3,
+      "acerto": "Lê-se: cargo='Gerente' OR (cargo='Analista' AND salario > 5500). Entram os dois gerentes.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 2 · Operadores lógicos"
+      }
+    },
+    {
+      "id": 43,
+      "tipo": "vf",
+      "topico": "SELECT e filtros",
+      "pergunta": "A consulta SELECT nome, salario + 500 AS salario_ajustado FROM funcionarios; aumenta permanentemente em 500 o salário gravado na tabela.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": "O SELECT não altera dados; para gravar seria preciso UPDATE."
+        },
+        {
+          "texto": "Falso",
+          "porque": ""
+        }
+      ],
+      "correta": 1,
+      "acerto": "SELECT só consulta: a coluna calculada existe apenas no resultado.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 1 · Operadores aritméticos"
+      }
+    },
+    {
+      "id": 44,
+      "tipo": "sql",
+      "topico": "Agregação, GROUP BY e HAVING",
+      "pergunta": "Quais valores a consulta retorna, respectivamente?",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "SELECT COUNT(*), COUNT(departamento_id)\nFROM funcionarios;",
+      "opcoes": [
+        {
+          "texto": "6 e 6",
+          "porque": "COUNT(coluna) não conta as linhas em que a coluna é NULL."
+        },
+        {
+          "texto": "6 e 5",
+          "porque": ""
+        },
+        {
+          "texto": "5 e 5",
+          "porque": "COUNT(*) conta todas as linhas, inclusive a do Hugo."
+        },
+        {
+          "texto": "5 e 6",
+          "porque": "Está invertido: COUNT(*) conta todas."
+        },
+        {
+          "texto": "6 e 3",
+          "porque": "COUNT(departamento_id) conta valores não nulos, não departamentos distintos."
+        }
+      ],
+      "correta": 1,
+      "acerto": "COUNT(*) = 6 linhas; COUNT(departamento_id) ignora o NULL do Hugo = 5.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Páginas 5 e 6 · Funções agregadas"
+      }
+    },
+    {
+      "id": 45,
+      "tipo": "sql",
+      "topico": "Agregação, GROUP BY e HAVING",
+      "pergunta": "Quantas linhas (grupos) o resultado tem?",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "SELECT departamento_id, COUNT(*) AS total\nFROM funcionarios\nGROUP BY departamento_id;",
+      "opcoes": [
+        {
+          "texto": "2",
+          "porque": "Hugo, com departamento NULL, forma um grupo próprio."
+        },
+        {
+          "texto": "3",
+          "porque": ""
+        },
+        {
+          "texto": "4",
+          "porque": "O departamento 30 (RH) não aparece: a consulta lê apenas funcionarios."
+        },
+        {
+          "texto": "6",
+          "porque": "GROUP BY junta as linhas com o mesmo valor."
+        },
+        {
+          "texto": "1",
+          "porque": "Há um grupo para cada valor diferente de departamento_id."
+        }
+      ],
+      "correta": 1,
+      "acerto": "Grupos: 10, 20 e NULL. GROUP BY coloca os valores NULL em um mesmo grupo.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 5 · Exemplo 4: GROUP BY"
+      }
+    },
+    {
+      "id": 46,
+      "tipo": "sql",
+      "topico": "Agregação, GROUP BY e HAVING",
+      "pergunta": "Qual é o resultado da consulta?",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "SELECT departamento_id, AVG(salario) AS media\nFROM funcionarios\nGROUP BY departamento_id\nHAVING AVG(salario) > 4000;",
+      "opcoes": [
+        {
+          "texto": "10 | 4500.00 e 20 | 3500.00",
+          "porque": "A média do departamento 20 é 3500, que não passa de 4000."
+        },
+        {
+          "texto": "10 | 4500.00",
+          "porque": ""
+        },
+        {
+          "texto": "20 | 3500.00",
+          "porque": "3500 não é maior que 4000."
+        },
+        {
+          "texto": "Nenhuma linha",
+          "porque": "O departamento 10 tem média 4500."
+        },
+        {
+          "texto": "Bruno | 6000.00 e Elisa | 5000.00",
+          "porque": "HAVING filtra grupos, não funcionários."
+        }
+      ],
+      "correta": 1,
+      "acerto": "Médias: dep. 10 = 4500; dep. 20 = 3500; NULL = 1200. Só o 10 passa no HAVING.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 5 · Exemplo 5: HAVING"
+      }
+    },
+    {
+      "id": 47,
+      "tipo": "assercao",
+      "topico": "Agregação, GROUP BY e HAVING",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "afirmativa": "A condição AVG(salario) > 5000 deve ficar no HAVING, e não no WHERE.",
+      "razao": "WHERE aplica condições às linhas antes do agrupamento; HAVING aplica condições aos grupos já formados.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": ""
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        }
+      ],
+      "correta": 0,
+      "acerto": "A média só existe depois que os grupos são formados; por isso o filtro vai no HAVING.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 5 · HAVING x WHERE"
+      }
+    },
+    {
+      "id": 48,
+      "tipo": "sql",
+      "topico": "Agregação, GROUP BY e HAVING",
+      "pergunta": "Por que a consulta abaixo gera erro no PostgreSQL?",
+      "codigo": "SELECT departamento_id, nome, COUNT(*)\nFROM funcionarios\nGROUP BY departamento_id;",
+      "opcoes": [
+        {
+          "texto": "Porque a coluna nome não está no GROUP BY nem em uma função agregada.",
+          "porque": ""
+        },
+        {
+          "texto": "Porque COUNT(*) não pode ser usado com GROUP BY.",
+          "porque": "É o uso mais comum de COUNT."
+        },
+        {
+          "texto": "Porque GROUP BY deveria vir antes de FROM.",
+          "porque": "GROUP BY vem depois de FROM (e de WHERE)."
+        },
+        {
+          "texto": "Porque falta a cláusula HAVING.",
+          "porque": "HAVING é opcional."
+        },
+        {
+          "texto": "Porque departamento_id tem valores NULL.",
+          "porque": "NULL forma um grupo; isso não causa erro."
+        }
+      ],
+      "correta": 0,
+      "acerto": "Cada grupo resulta em uma linha; sem agregação, o banco não sabe qual nome mostrar.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 5 · GROUP BY e funções agregadas"
+      }
+    },
+    {
+      "id": 49,
+      "tipo": "sql",
+      "topico": "Agregação, GROUP BY e HAVING",
+      "pergunta": "Qual valor é retornado?",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "SELECT MAX(salario) - MIN(salario) AS amplitude\nFROM funcionarios;",
+      "opcoes": [
+        {
+          "texto": "6000.00",
+          "porque": "Esse é apenas o MAX."
+        },
+        {
+          "texto": "1200.00",
+          "porque": "Esse é apenas o MIN."
+        },
+        {
+          "texto": "4000.00",
+          "porque": "O menor salário é 1200 (Hugo), não 2000."
+        },
+        {
+          "texto": "4800.00",
+          "porque": ""
+        },
+        {
+          "texto": "3450.00",
+          "porque": "Essa é a média (AVG)."
+        }
+      ],
+      "correta": 3,
+      "acerto": "MAX = 6000 (Bruno) e MIN = 1200 (Hugo): 6000 − 1200 = 4800.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 6 · MAX e MIN"
+      }
+    },
+    {
+      "id": 50,
+      "tipo": "sql",
+      "topico": "Agregação, GROUP BY e HAVING",
+      "pergunta": "Na linha do departamento 20, qual é o valor de total?",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "SELECT departamento_id, SUM(salario) AS total\nFROM funcionarios\nWHERE cargo <> 'Gerente'\nGROUP BY departamento_id;",
+      "opcoes": [
+        {
+          "texto": "10500.00",
+          "porque": "O WHERE retira Elisa (Gerente) antes da soma."
+        },
+        {
+          "texto": "5500.00",
+          "porque": ""
+        },
+        {
+          "texto": "3500.00",
+          "porque": "Diego (Vendedor, 2000) também entra."
+        },
+        {
+          "texto": "8500.00",
+          "porque": "Carla + Elisa; mas Elisa é Gerente e foi filtrada."
+        },
+        {
+          "texto": "2",
+          "porque": "SUM soma salários; não conta linhas."
+        }
+      ],
+      "correta": 1,
+      "acerto": "WHERE filtra antes de agrupar: no dep. 20 sobram Carla (3500) + Diego (2000) = 5500.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 6 · SUM com GROUP BY"
+      }
+    },
+    {
+      "id": 51,
+      "tipo": "sql",
+      "topico": "JOINs",
+      "pergunta": "Quantas linhas o INNER JOIN retorna?",
+      "tabelas": [
+        "clientes",
+        "pedidos"
+      ],
+      "codigo": "SELECT clientes.nome, pedidos.produto\nFROM clientes\nINNER JOIN pedidos ON clientes.id = pedidos.cliente_id;",
+      "opcoes": [
+        {
+          "texto": "2",
+          "porque": "Ana e Bruno aparecem, mas Bruno tem dois pedidos: são duas linhas dele."
+        },
+        {
+          "texto": "3",
+          "porque": ""
+        },
+        {
+          "texto": "4",
+          "porque": "O pedido do cliente_id 5 não tem cliente correspondente."
+        },
+        {
+          "texto": "5",
+          "porque": "Carla e Daniel não têm pedidos e não aparecem no INNER JOIN."
+        },
+        {
+          "texto": "16",
+          "porque": "16 seria o CROSS JOIN (4 × 4)."
+        }
+      ],
+      "correta": 1,
+      "acerto": "Ana–Notebook, Bruno–Smartphone e Bruno–Tablet.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slides 6 e 7 · INNER JOIN"
+      }
+    },
+    {
+      "id": 52,
+      "tipo": "sql",
+      "topico": "JOINs",
+      "pergunta": "Quantas linhas o LEFT JOIN retorna, e o que aparece para Carla?",
+      "tabelas": [
+        "clientes",
+        "pedidos"
+      ],
+      "codigo": "SELECT clientes.nome, pedidos.produto\nFROM clientes\nLEFT JOIN pedidos ON clientes.id = pedidos.cliente_id;",
+      "opcoes": [
+        {
+          "texto": "4 linhas; Carla não aparece.",
+          "porque": "LEFT JOIN mantém todos os clientes (tabela da esquerda)."
+        },
+        {
+          "texto": "5 linhas; Carla aparece com produto NULL.",
+          "porque": ""
+        },
+        {
+          "texto": "5 linhas; Carla aparece com produto 'Monitor'.",
+          "porque": "O Monitor é do cliente_id 5, que não existe; não se liga à Carla."
+        },
+        {
+          "texto": "6 linhas; Carla aparece com produto NULL.",
+          "porque": "O Monitor (cliente 5) só entraria com RIGHT ou FULL JOIN."
+        },
+        {
+          "texto": "3 linhas; igual ao INNER JOIN.",
+          "porque": "Clientes sem pedido também entram."
+        }
+      ],
+      "correta": 1,
+      "acerto": "Ana, Bruno ×2, Carla (NULL) e Daniel (NULL) = 5 linhas.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slide 8 · LEFT JOIN"
+      }
+    },
+    {
+      "id": 53,
+      "tipo": "sql",
+      "topico": "JOINs",
+      "pergunta": "Qual linha aparece no resultado do RIGHT JOIN, mas NÃO aparece no INNER JOIN?",
+      "tabelas": [
+        "clientes",
+        "pedidos"
+      ],
+      "codigo": "SELECT clientes.nome, pedidos.produto\nFROM clientes\nRIGHT JOIN pedidos ON clientes.id = pedidos.cliente_id;",
+      "opcoes": [
+        {
+          "texto": "Carla | NULL",
+          "porque": "Carla não tem pedido; ela só apareceria com LEFT ou FULL JOIN."
+        },
+        {
+          "texto": "Daniel | NULL",
+          "porque": "Daniel não tem pedido; ele só apareceria com LEFT ou FULL JOIN."
+        },
+        {
+          "texto": "NULL | Monitor",
+          "porque": ""
+        },
+        {
+          "texto": "Bruno | Tablet",
+          "porque": "Essa linha também está no INNER JOIN."
+        },
+        {
+          "texto": "Nenhuma: RIGHT JOIN e INNER JOIN dão sempre o mesmo resultado.",
+          "porque": "RIGHT JOIN mantém todos os pedidos, mesmo sem cliente."
+        }
+      ],
+      "correta": 2,
+      "acerto": "RIGHT JOIN preserva todos os pedidos; o Monitor (cliente_id 5) aparece com nome NULL.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slide 9 · RIGHT JOIN"
+      }
+    },
+    {
+      "id": 54,
+      "tipo": "sql",
+      "topico": "JOINs",
+      "pergunta": "Quantas linhas o FULL OUTER JOIN retorna?",
+      "tabelas": [
+        "clientes",
+        "pedidos"
+      ],
+      "codigo": "SELECT clientes.nome, pedidos.produto\nFROM clientes\nFULL OUTER JOIN pedidos ON clientes.id = pedidos.cliente_id;",
+      "opcoes": [
+        {
+          "texto": "3",
+          "porque": "Esse é o INNER JOIN."
+        },
+        {
+          "texto": "4",
+          "porque": "É preciso somar os não correspondidos dos dois lados."
+        },
+        {
+          "texto": "5",
+          "porque": "Esse é o LEFT JOIN; falta o Monitor sem cliente."
+        },
+        {
+          "texto": "6",
+          "porque": ""
+        },
+        {
+          "texto": "16",
+          "porque": "Esse é o CROSS JOIN."
+        }
+      ],
+      "correta": 3,
+      "acerto": "3 correspondências + Carla e Daniel (sem pedido) + Monitor (sem cliente) = 6.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slide 10 · FULL OUTER JOIN"
+      }
+    },
+    {
+      "id": 55,
+      "tipo": "sql",
+      "topico": "JOINs",
+      "pergunta": "Quantas linhas retorna a consulta abaixo, e por quê?",
+      "tabelas": [
+        "clientes",
+        "pedidos"
+      ],
+      "codigo": "SELECT clientes.nome, pedidos.produto\nFROM clientes\nCROSS JOIN pedidos;",
+      "opcoes": [
+        {
+          "texto": "3, porque só conta as correspondências.",
+          "porque": "CROSS JOIN não usa condição de correspondência."
+        },
+        {
+          "texto": "8, porque soma as linhas das duas tabelas.",
+          "porque": "O produto cartesiano multiplica: 4 × 4."
+        },
+        {
+          "texto": "16, porque combina cada cliente com cada pedido.",
+          "porque": ""
+        },
+        {
+          "texto": "4, porque pega o menor número de linhas.",
+          "porque": "Todas as combinações possíveis são geradas."
+        },
+        {
+          "texto": "Erro, porque falta a cláusula ON.",
+          "porque": "CROSS JOIN não usa ON."
+        }
+      ],
+      "correta": 2,
+      "acerto": "Produto cartesiano: 4 clientes × 4 pedidos = 16 linhas.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slide 11 · CROSS JOIN"
+      }
+    },
+    {
+      "id": 56,
+      "tipo": "sql",
+      "topico": "JOINs",
+      "pergunta": "O que a consulta abaixo retorna?",
+      "tabelas": [
+        "clientes",
+        "pedidos"
+      ],
+      "codigo": "SELECT clientes.nome\nFROM clientes\nLEFT JOIN pedidos ON clientes.id = pedidos.cliente_id\nWHERE pedidos.produto IS NULL;",
+      "opcoes": [
+        {
+          "texto": "Ana e Bruno",
+          "porque": "Ana e Bruno têm pedidos, então produto não fica NULL para eles."
+        },
+        {
+          "texto": "Todos os clientes",
+          "porque": "O WHERE fica só com as linhas em que não houve correspondência."
+        },
+        {
+          "texto": "Somente o Monitor",
+          "porque": "A consulta mostra o nome de clientes; o Monitor não tem cliente."
+        },
+        {
+          "texto": "Nenhuma linha, pois produto nunca é NULL na tabela pedidos.",
+          "porque": "O NULL é gerado pelo LEFT JOIN para clientes sem pedido."
+        },
+        {
+          "texto": "Carla e Daniel",
+          "porque": ""
+        }
+      ],
+      "correta": 4,
+      "acerto": "O LEFT JOIN gera NULL para quem não tem pedido; o filtro IS NULL deixa só esses clientes.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slide 8 · LEFT JOIN (produtos NULL se não houver pedidos)"
+      }
+    },
+    {
+      "id": 57,
+      "tipo": "vf",
+      "topico": "JOINs",
+      "pergunta": "\"FROM pedidos LEFT JOIN clientes ON …\" retorna as mesmas linhas que \"FROM clientes RIGHT JOIN pedidos ON …\" (com a mesma condição).",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": ""
+        },
+        {
+          "texto": "Falso",
+          "porque": "LEFT preserva a tabela da esquerda e RIGHT a da direita; nos dois comandos, a preservada é pedidos."
+        }
+      ],
+      "correta": 0,
+      "acerto": "Nos dois casos a tabela preservada é pedidos; só muda o lado em que ela é escrita.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 7 · Tipos de joins comuns"
+      }
+    },
+    {
+      "id": 58,
+      "tipo": "sql",
+      "topico": "JOINs",
+      "pergunta": "O programador errou a condição do JOIN. Qual é o resultado?",
+      "tabelas": [
+        "clientes",
+        "pedidos"
+      ],
+      "codigo": "SELECT clientes.nome, pedidos.produto\nFROM clientes\nINNER JOIN pedidos ON clientes.id = pedidos.id;",
+      "opcoes": [
+        {
+          "texto": "Ana–Notebook, Bruno–Smartphone e Bruno–Tablet (o mesmo do JOIN correto).",
+          "porque": "A condição compara id com id, não com cliente_id."
+        },
+        {
+          "texto": "Nenhuma linha.",
+          "porque": "Os ids 1 a 4 existem nas duas tabelas."
+        },
+        {
+          "texto": "Erro: o SGBD detecta que a coluna correta é cliente_id.",
+          "porque": "O SGBD não sabe a intenção; ele executa a comparação pedida."
+        },
+        {
+          "texto": "Ana–Notebook, Bruno–Smartphone, Carla–Tablet e Daniel–Monitor.",
+          "porque": ""
+        },
+        {
+          "texto": "16 linhas.",
+          "porque": "Há condição ON; não é um produto cartesiano."
+        }
+      ],
+      "correta": 3,
+      "acerto": "ON clientes.id = pedidos.id liga cliente 1 ao pedido 1, cliente 2 ao pedido 2… dados errados, sem erro.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slides 6 e 7 · Estrutura das tabelas e INNER JOIN"
+      }
+    },
+    {
+      "id": 59,
+      "tipo": "sql",
+      "topico": "JOINs",
+      "pergunta": "Por que a consulta abaixo gera erro?",
+      "diagrama": "er-rh",
+      "codigo": "SELECT nome\nFROM funcionarios\nINNER JOIN departamentos\n  ON funcionarios.departamento_id = departamentos.id;",
+      "opcoes": [
+        {
+          "texto": "Porque INNER JOIN exige alias nas tabelas.",
+          "porque": "Alias é boa prática, mas não é obrigatório."
+        },
+        {
+          "texto": "Porque a coluna nome existe nas duas tabelas e não foi indicado de qual delas é.",
+          "porque": ""
+        },
+        {
+          "texto": "Porque departamento_id pode ser NULL.",
+          "porque": "Valores NULL só deixam de casar no JOIN; não geram erro."
+        },
+        {
+          "texto": "Porque o ON deveria comparar nome com nome.",
+          "porque": "A ligação é feita pela chave estrangeira."
+        },
+        {
+          "texto": "Porque não se pode usar JOIN entre funcionarios e departamentos.",
+          "porque": "As tabelas estão relacionadas pela FK."
+        }
+      ],
+      "correta": 1,
+      "acerto": "Coluna ambígua: é preciso escrever funcionarios.nome ou departamentos.nome (ou usar alias).",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Páginas 6 e 8 · INNER JOIN e uso de alias"
+      }
+    },
+    {
+      "id": 60,
+      "tipo": "sql",
+      "topico": "JOINs",
+      "pergunta": "Qual valor aparece em qtd na linha do departamento RH?",
+      "tabelas": [
+        "departamentos",
+        "funcionarios"
+      ],
+      "codigo": "SELECT d.nome, COUNT(f.id) AS qtd\nFROM departamentos d\nLEFT JOIN funcionarios f ON f.departamento_id = d.id\nGROUP BY d.nome;",
+      "opcoes": [
+        {
+          "texto": "0",
+          "porque": ""
+        },
+        {
+          "texto": "1",
+          "porque": "COUNT(f.id) não conta o NULL gerado pelo LEFT JOIN. COUNT(*) é que daria 1."
+        },
+        {
+          "texto": "NULL",
+          "porque": "COUNT devolve 0 quando não há valores, não NULL."
+        },
+        {
+          "texto": "6",
+          "porque": "A contagem é por departamento."
+        },
+        {
+          "texto": "RH não aparece no resultado.",
+          "porque": "LEFT JOIN a partir de departamentos mantém todos eles."
+        }
+      ],
+      "correta": 0,
+      "acerto": "RH vem do LEFT JOIN com f.id = NULL; COUNT(f.id) ignora NULL e resulta 0.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Páginas 6 e 7 · COUNT e LEFT JOIN"
+      }
+    },
+    {
+      "id": 61,
+      "tipo": "modelo",
+      "topico": "JOINs",
+      "pergunta": "Qual consulta lista TODOS os funcionários com o nome do departamento, mostrando NULL para quem não tem departamento?",
+      "diagrama": "er-rh",
+      "opcoesCodigo": true,
+      "opcoes": [
+        {
+          "texto": "SELECT f.nome, d.nome\nFROM funcionarios f\nINNER JOIN departamentos d ON f.departamento_id = d.id;",
+          "porque": "INNER JOIN elimina o funcionário sem departamento."
+        },
+        {
+          "texto": "SELECT f.nome, d.nome\nFROM departamentos d\nLEFT JOIN funcionarios f ON f.departamento_id = d.id;",
+          "porque": "Essa mantém todos os DEPARTAMENTOS; o funcionário sem departamento fica de fora."
+        },
+        {
+          "texto": "SELECT f.nome, d.nome\nFROM funcionarios f\nLEFT JOIN departamentos d ON f.departamento_id = d.id;",
+          "porque": ""
+        },
+        {
+          "texto": "SELECT f.nome, d.nome\nFROM funcionarios f\nCROSS JOIN departamentos d;",
+          "porque": "CROSS JOIN combina todos com todos, sem respeitar a FK."
+        },
+        {
+          "texto": "SELECT f.nome, d.nome\nFROM funcionarios f\nLEFT JOIN departamentos d ON f.id = d.id;",
+          "porque": "A condição compara as chaves primárias, não a FK."
+        }
+      ],
+      "correta": 2,
+      "acerto": "funcionarios à esquerda + LEFT JOIN preserva todos os funcionários.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Página 7 · Exemplo de LEFT JOIN"
+      }
+    },
+    {
+      "id": 62,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Quais funcionários são retornados?",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "SELECT nome, salario\nFROM funcionarios\nWHERE salario > (SELECT AVG(salario) FROM funcionarios);",
+      "opcoes": [
+        {
+          "texto": "Bruno e Elisa",
+          "porque": "A média é 3450; Carla (3500) também está acima."
+        },
+        {
+          "texto": "Erro: não se pode comparar com AVG no WHERE.",
+          "porque": "A comparação é com o resultado da subconsulta, e não com AVG diretamente."
+        },
+        {
+          "texto": "Ana, Bruno, Carla e Elisa",
+          "porque": "Ana (3000) está abaixo da média de 3450."
+        },
+        {
+          "texto": "Somente Bruno",
+          "porque": "A subconsulta calcula a média, não o máximo."
+        },
+        {
+          "texto": "Bruno, Carla e Elisa",
+          "porque": ""
+        }
+      ],
+      "correta": 4,
+      "acerto": "A subconsulta escalar calcula 20700 / 6 = 3450; ficam os salários acima disso.",
+      "fonte": {
+        "titulo": "Apostila — DQL (Data Query Language)",
+        "local": "Páginas 7 e 8 · Exemplo de subconsulta"
+      }
+    },
+    {
+      "id": 63,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Compare as duas consultas. Qual afirmação está correta?",
+      "tabelas": [
+        "clientes",
+        "pedidos"
+      ],
+      "codigo": "-- (1)\nSELECT nome FROM clientes\nWHERE id IN (SELECT cliente_id FROM pedidos);\n\n-- (2)\nSELECT clientes.nome FROM clientes\nINNER JOIN pedidos ON clientes.id = pedidos.cliente_id;",
+      "opcoes": [
+        {
+          "texto": "As duas retornam 3 linhas.",
+          "porque": "A versão com IN não repete o Bruno: retorna 2 linhas."
+        },
+        {
+          "texto": "(1) também retorna Daniel, por causa do pedido com cliente_id 5.",
+          "porque": "Daniel tem id 4; o id 5 não existe em clientes."
+        },
+        {
+          "texto": "(1) retorna Ana, Bruno e Bruno; (2) retorna Ana e Bruno.",
+          "porque": "Está invertido: o JOIN multiplica as linhas."
+        },
+        {
+          "texto": "(1) retorna Ana e Bruno; (2) retorna Ana, Bruno e Bruno.",
+          "porque": ""
+        },
+        {
+          "texto": "(2) só funciona com DISTINCT.",
+          "porque": "Funciona sem DISTINCT; ele serve para remover a repetição."
+        }
+      ],
+      "correta": 3,
+      "acerto": "O IN só testa se o id está no conjunto; o JOIN combina linhas e repete quem tem 2 pedidos.",
+      "fonte": {
+        "titulo": "Material — Subconsultas (base DVD Rental)",
+        "local": "Seções 9.1 a 9.3 (p. 7 e 8) · Subconsulta versus INNER JOIN"
+      }
+    },
+    {
+      "id": 64,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Quais nomes a consulta retorna?",
+      "tabelas": [
+        "clientes",
+        "pedidos"
+      ],
+      "codigo": "SELECT nome\nFROM clientes\nWHERE id NOT IN (\n  SELECT cliente_id FROM pedidos\n);",
+      "opcoes": [
+        {
+          "texto": "Ana e Bruno",
+          "porque": "Esses são os que ESTÃO em pedidos; NOT IN inverte."
+        },
+        {
+          "texto": "Carla e Daniel",
+          "porque": ""
+        },
+        {
+          "texto": "Carla, Daniel e o cliente 5",
+          "porque": "O cliente 5 não existe na tabela clientes."
+        },
+        {
+          "texto": "Nenhum",
+          "porque": "Os ids 3 e 4 não estão na lista (1, 2, 2, 5)."
+        },
+        {
+          "texto": "Todos os quatro",
+          "porque": "Ana (1) e Bruno (2) estão na lista."
+        }
+      ],
+      "correta": 1,
+      "acerto": "A subconsulta devolve (1, 2, 2, 5); ficam os clientes cujo id não está nessa lista.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slide 14 · NOT IN"
+      }
+    },
+    {
+      "id": 65,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Por que esta consulta gera erro?",
+      "tabelas": [
+        "pedidos"
+      ],
+      "codigo": "SELECT nome\nFROM clientes\nWHERE id = (SELECT cliente_id FROM pedidos);",
+      "opcoes": [
+        {
+          "texto": "Porque o operador = espera um único valor, e a subconsulta retorna várias linhas.",
+          "porque": ""
+        },
+        {
+          "texto": "Porque não se pode usar subconsulta no WHERE.",
+          "porque": "Subconsulta no WHERE é o caso mais comum."
+        },
+        {
+          "texto": "Porque a subconsulta precisa ter alias.",
+          "porque": "Alias é obrigatório para subconsulta no FROM, não no WHERE."
+        },
+        {
+          "texto": "Porque cliente_id tem valor 5, que não existe em clientes.",
+          "porque": "Isso não gera erro; simplesmente não casa."
+        },
+        {
+          "texto": "Porque falta ORDER BY na subconsulta.",
+          "porque": "ORDER BY não é necessário."
+        }
+      ],
+      "correta": 0,
+      "acerto": "Erro comum: subconsulta escalar que retorna mais de uma linha. Para listas, usa-se IN.",
+      "fonte": {
+        "titulo": "Material — Subconsultas (base DVD Rental)",
+        "local": "Seção 13 (p. 11) · Erros comuns"
+      }
+    },
+    {
+      "id": 66,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Em que ordem lógica a consulta abaixo é resolvida?",
+      "diagrama": "er-dvd",
+      "codigo": "SELECT title\nFROM film\nWHERE film_id IN (\n    SELECT film_id\n    FROM film_category\n    WHERE category_id = (\n        SELECT category_id\n        FROM category\n        WHERE name = 'Action'\n    )\n)\nORDER BY title;",
+      "opcoes": [
+        {
+          "texto": "Lista os títulos → busca os film_id → descobre o category_id.",
+          "porque": "A consulta externa depende dos resultados internos."
+        },
+        {
+          "texto": "Busca os film_id → descobre o category_id → ordena por título → filtra Action.",
+          "porque": "Primeiro é preciso saber qual é o id da categoria."
+        },
+        {
+          "texto": "Descobre o category_id de Action → busca os film_id dessa categoria → lista os títulos.",
+          "porque": ""
+        },
+        {
+          "texto": "Executa as três consultas ao mesmo tempo, sem dependência.",
+          "porque": "Cada nível usa o resultado do nível mais interno."
+        },
+        {
+          "texto": "Faz um CROSS JOIN entre film e category.",
+          "porque": "Não há JOIN; são subconsultas aninhadas."
+        }
+      ],
+      "correta": 2,
+      "acerto": "Do mais interno para o externo: category → film_category → film.",
+      "fonte": {
+        "titulo": "Material — Subconsultas (base DVD Rental)",
+        "local": "Seção 6.3 (p. 6) · Subconsulta dentro de subconsulta"
+      }
+    },
+    {
+      "id": 67,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Qual das consultas contém uma subconsulta CORRELACIONADA?",
+      "opcoesCodigo": true,
+      "opcoes": [
+        {
+          "texto": "SELECT title FROM film\nWHERE length > (SELECT AVG(length) FROM film);",
+          "porque": "A subconsulta calcula um valor único, sem usar a linha externa."
+        },
+        {
+          "texto": "SELECT nome FROM clientes\nWHERE id IN (SELECT cliente_id FROM pedidos);",
+          "porque": "A subconsulta é independente da consulta externa."
+        },
+        {
+          "texto": "SELECT nome FROM clientes\nWHERE id NOT IN (SELECT cliente_id FROM pedidos);",
+          "porque": "A subconsulta não usa nenhuma coluna da consulta externa."
+        },
+        {
+          "texto": "SELECT c.nome, p.total FROM clientes c\nLEFT JOIN (SELECT cliente_id, COUNT(*) AS total\n           FROM pedidos GROUP BY cliente_id) p\nON c.id = p.cliente_id;",
+          "porque": "A subconsulta no FROM é calculada uma vez, sem depender de cada linha externa."
+        },
+        {
+          "texto": "SELECT f.title FROM film f\nWHERE f.rental_rate > (\n  SELECT AVG(f2.rental_rate) FROM film f2\n  WHERE f2.rating = f.rating);",
+          "porque": ""
+        }
+      ],
+      "correta": 4,
+      "acerto": "f2.rating = f.rating usa a linha atual da consulta externa: a subconsulta depende dela.",
+      "fonte": {
+        "titulo": "Material — Subconsultas (base DVD Rental)",
+        "local": "Seções 5.4 e 6.5 (p. 5 e 6) · Subconsulta correlacionada"
+      }
+    },
+    {
+      "id": 68,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Quais filmes a consulta correlacionada retorna?",
+      "tabelas": [
+        "film"
+      ],
+      "codigo": "SELECT f.title, f.rating, f.rental_rate\nFROM film f\nWHERE f.rental_rate > (\n    SELECT AVG(f2.rental_rate)\n    FROM film f2\n    WHERE f2.rating = f.rating\n)\nORDER BY f.rating, f.rental_rate DESC;",
+      "opcoes": [
+        {
+          "texto": "Charlie e Echo",
+          "porque": "Echo é o único R: o valor dele é igual à média da classificação, não maior."
+        },
+        {
+          "texto": "Bravo, Charlie, Delta e Echo",
+          "porque": "Esse seria o resultado comparando com valores fixos, não com a média de cada classificação."
+        },
+        {
+          "texto": "Charlie, Delta e Echo",
+          "porque": "Echo (4.99) não é maior que a média do R, que é 4.99."
+        },
+        {
+          "texto": "Delta e Charlie",
+          "porque": ""
+        },
+        {
+          "texto": "Nenhum",
+          "porque": "Delta (2.99) supera a média G (1.99); Charlie (4.99) supera a média PG (3.99)."
+        }
+      ],
+      "correta": 3,
+      "acerto": "Médias: G = 1.99, PG = 3.99, R = 4.99. Acima da média do próprio grupo: Delta e Charlie.",
+      "fonte": {
+        "titulo": "Material — Subconsultas (base DVD Rental)",
+        "local": "Seção 6.5 (p. 6) · Exemplo 5: subconsulta correlacionada"
+      }
+    },
+    {
+      "id": 69,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Quantos filmes a consulta retorna?",
+      "tabelas": [
+        "film"
+      ],
+      "codigo": "SELECT title, rental_rate\nFROM film\nWHERE rental_rate > ANY (\n    SELECT rental_rate\n    FROM film\n    WHERE rating = 'PG'\n);",
+      "opcoes": [
+        {
+          "texto": "0",
+          "porque": "Basta ser maior que o MENOR valor do conjunto (2.99)."
+        },
+        {
+          "texto": "1",
+          "porque": "Charlie e Echo valem 4.99, e ambos são maiores que 2.99."
+        },
+        {
+          "texto": "2",
+          "porque": ""
+        },
+        {
+          "texto": "4",
+          "porque": "Bravo e Delta (2.99) não são maiores que 2.99."
+        },
+        {
+          "texto": "5",
+          "porque": "Alpha (0.99) não é maior que nenhum valor do conjunto."
+        }
+      ],
+      "correta": 2,
+      "acerto": "Conjunto PG = {2.99, 4.99}. > ANY = maior que pelo menos um: Charlie e Echo.",
+      "fonte": {
+        "titulo": "Material — Subconsultas (base DVD Rental)",
+        "local": "Seção 11.3 (p. 10) · ANY"
+      }
+    },
+    {
+      "id": 70,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Quantos filmes a consulta retorna?",
+      "tabelas": [
+        "film"
+      ],
+      "codigo": "SELECT title, rental_rate\nFROM film\nWHERE rental_rate >= ALL (\n    SELECT rental_rate\n    FROM film\n    WHERE rating = 'G'\n);",
+      "opcoes": [
+        {
+          "texto": "1",
+          "porque": "Basta ser >= ao MAIOR valor do conjunto (2.99)."
+        },
+        {
+          "texto": "2",
+          "porque": "Bravo e Delta (2.99) também satisfazem >= 2.99."
+        },
+        {
+          "texto": "3",
+          "porque": "Confira: Bravo, Charlie, Delta e Echo."
+        },
+        {
+          "texto": "4",
+          "porque": ""
+        },
+        {
+          "texto": "5",
+          "porque": "Alpha (0.99) não é >= 2.99."
+        }
+      ],
+      "correta": 3,
+      "acerto": "Conjunto G = {0.99, 2.99}. >= ALL = maior ou igual a todos, ou seja, >= 2.99.",
+      "fonte": {
+        "titulo": "Material — Subconsultas (base DVD Rental)",
+        "local": "Seção 11.4 (p. 10) · ALL"
+      }
+    },
+    {
+      "id": 71,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Qual é o valor de total_pedidos para Carla?",
+      "tabelas": [
+        "clientes",
+        "pedidos"
+      ],
+      "codigo": "SELECT nome,\n  (SELECT COUNT(*)\n   FROM pedidos\n   WHERE pedidos.cliente_id = clientes.id) AS total_pedidos\nFROM clientes;",
+      "opcoes": [
+        {
+          "texto": "NULL",
+          "porque": "COUNT(*) devolve 0 quando nenhuma linha é encontrada."
+        },
+        {
+          "texto": "0",
+          "porque": ""
+        },
+        {
+          "texto": "1",
+          "porque": "Carla não tem pedidos."
+        },
+        {
+          "texto": "4",
+          "porque": "A subconsulta filtra pelo cliente da linha atual."
+        },
+        {
+          "texto": "Carla não aparece no resultado.",
+          "porque": "A consulta lista todos os clientes; a subconsulta só calcula uma coluna."
+        }
+      ],
+      "correta": 1,
+      "acerto": "A subconsulta no SELECT conta os pedidos daquele cliente; para Carla, COUNT(*) = 0.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slides 12 e 13 · Subconsulta no SELECT"
+      }
+    },
+    {
+      "id": 72,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Agora a contagem foi feita em uma subconsulta no FROM. Qual é o valor de p.total para Carla?",
+      "tabelas": [
+        "clientes",
+        "pedidos"
+      ],
+      "codigo": "SELECT c.nome, p.total\nFROM clientes c\nLEFT JOIN (\n  SELECT cliente_id, COUNT(*) AS total\n  FROM pedidos\n  GROUP BY cliente_id\n) p ON c.id = p.cliente_id;",
+      "opcoes": [
+        {
+          "texto": "NULL",
+          "porque": ""
+        },
+        {
+          "texto": "0",
+          "porque": "A tabela derivada só tem linhas para clientes com pedido; o LEFT JOIN preenche Carla com NULL."
+        },
+        {
+          "texto": "2",
+          "porque": "Esse é o total do Bruno."
+        },
+        {
+          "texto": "1",
+          "porque": "Carla não aparece na tabela derivada p."
+        },
+        {
+          "texto": "Carla não aparece no resultado.",
+          "porque": "LEFT JOIN mantém todos os clientes."
+        }
+      ],
+      "correta": 0,
+      "acerto": "p tem linhas só para cliente_id 1, 2 e 5. Carla não casa, e o LEFT JOIN coloca NULL.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slide 14 · Subconsulta no FROM"
+      }
+    },
+    {
+      "id": 73,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Quantas linhas a consulta retorna, e qual é o cliente do Monitor?",
+      "tabelas": [
+        "clientes",
+        "pedidos"
+      ],
+      "codigo": "SELECT produto,\n  (SELECT nome FROM clientes WHERE clientes.id = pedidos.cliente_id) AS cliente\nFROM pedidos;",
+      "opcoes": [
+        {
+          "texto": "3 linhas; o Monitor não aparece.",
+          "porque": "A consulta lê todos os pedidos; a subconsulta só busca o nome."
+        },
+        {
+          "texto": "4 linhas; o cliente do Monitor é Daniel.",
+          "porque": "Daniel tem id 4; o Monitor é do cliente_id 5."
+        },
+        {
+          "texto": "4 linhas; o cliente do Monitor é NULL.",
+          "porque": ""
+        },
+        {
+          "texto": "Erro, porque a subconsulta não encontra cliente para o id 5.",
+          "porque": "Subconsulta escalar sem resultado devolve NULL, não erro."
+        },
+        {
+          "texto": "16 linhas.",
+          "porque": "Não há CROSS JOIN; é uma linha por pedido."
+        }
+      ],
+      "correta": 2,
+      "acerto": "Uma linha por pedido; para o cliente_id 5, a subconsulta correlacionada não acha nome e devolve NULL.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slide 15 · Subconsulta correlacionada"
+      }
+    },
+    {
+      "id": 74,
+      "tipo": "sql",
+      "topico": "Subconsultas",
+      "pergunta": "Quantos departamentos aparecem no resultado?",
+      "tabelas": [
+        "funcionarios"
+      ],
+      "codigo": "SELECT departamento_id, AVG(salario) AS media\nFROM funcionarios\nGROUP BY departamento_id\nHAVING AVG(salario) > (SELECT AVG(salario) FROM funcionarios);",
+      "opcoes": [
+        {
+          "texto": "0",
+          "porque": "As médias de 10 e 20 superam a média geral."
+        },
+        {
+          "texto": "1",
+          "porque": "O departamento 20 (média 3500) também supera 3450."
+        },
+        {
+          "texto": "2",
+          "porque": ""
+        },
+        {
+          "texto": "3",
+          "porque": "O grupo NULL (Hugo) tem média 1200, abaixo de 3450."
+        },
+        {
+          "texto": "Erro: HAVING não aceita subconsulta.",
+          "porque": "A subconsulta pode aparecer no HAVING."
+        }
+      ],
+      "correta": 2,
+      "acerto": "Média geral = 3450. Dep. 10 = 4500 e dep. 20 = 3500 passam; o grupo NULL = 1200 não.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slide 12 · Subconsulta no WHERE, FROM, SELECT e HAVING"
+      }
+    },
+    {
+      "id": 75,
+      "tipo": "modelo",
+      "topico": "Subconsultas",
+      "pergunta": "Precisamos exibir o nome do cliente, o valor e a data de CADA pagamento. Qual abordagem é a mais natural, segundo o material?",
+      "diagrama": "er-dvd",
+      "opcoes": [
+        {
+          "texto": "Subconsulta com IN no WHERE, pois ela filtra clientes.",
+          "porque": "O IN só filtra; não traz colunas de payment para o resultado."
+        },
+        {
+          "texto": "Nenhuma: não é possível juntar essas tabelas.",
+          "porque": "payment.customer_id é FK para customer."
+        },
+        {
+          "texto": "CROSS JOIN entre customer e payment.",
+          "porque": "Combinaria cada cliente com pagamentos de outros clientes."
+        },
+        {
+          "texto": "Subconsulta escalar no WHERE com =.",
+          "porque": "Retornaria várias linhas e geraria erro."
+        },
+        {
+          "texto": "INNER JOIN entre customer e payment.",
+          "porque": ""
+        }
+      ],
+      "correta": 4,
+      "acerto": "Para exibir colunas das duas tabelas, o JOIN é mais adequado.",
+      "fonte": {
+        "titulo": "Material — Subconsultas (base DVD Rental)",
+        "local": "Seção 9.4 (p. 8) · Exemplo em que o JOIN é mais natural"
+      }
+    },
+    {
+      "id": 76,
+      "tipo": "modelo",
+      "topico": "Subconsultas",
+      "pergunta": "Usando o modelo acadêmico, qual consulta lista os nomes dos alunos matriculados no curso 10, sem repetição e sem JOIN?",
+      "diagrama": "er-escola",
+      "opcoesCodigo": true,
+      "opcoes": [
+        {
+          "texto": "SELECT nome FROM alunos\nWHERE id_aluno = (SELECT id_aluno FROM matriculas\n                  WHERE id_curso = 10);",
+          "porque": "Com '=', se houver mais de um aluno no curso, a subconsulta retorna várias linhas e dá erro."
+        },
+        {
+          "texto": "SELECT nome FROM alunos\nWHERE id_aluno IN (SELECT id_curso FROM matriculas\n                   WHERE id_curso = 10);",
+          "porque": "A subconsulta devolve id_curso, não id_aluno."
+        },
+        {
+          "texto": "SELECT nome FROM alunos\nWHERE id_curso = 10;",
+          "porque": "alunos não tem a coluna id_curso; ela está em matriculas."
+        },
+        {
+          "texto": "SELECT nome FROM alunos\nWHERE id_aluno IN (SELECT id_aluno FROM matriculas\n                   WHERE id_curso = 10);",
+          "porque": ""
+        },
+        {
+          "texto": "SELECT nome FROM matriculas\nWHERE id_curso IN (10);",
+          "porque": "matriculas não tem a coluna nome."
+        }
+      ],
+      "correta": 3,
+      "acerto": "A subconsulta devolve os id_aluno do curso 10; o IN filtra os alunos correspondentes.",
+      "fonte": {
+        "titulo": "Material — Subconsultas (base DVD Rental)",
+        "local": "Seção 4.2 (p. 4) · Subconsulta retornando vários valores"
+      }
+    },
+    {
+      "id": 77,
+      "tipo": "vf",
+      "topico": "Subconsultas",
+      "pergunta": "Segundo o material, uma subconsulta é sempre mais lenta que um INNER JOIN; por isso deve ser evitada.",
+      "opcoes": [
+        {
+          "texto": "Verdadeiro",
+          "porque": "O material afirma que não existe regra absoluta; o PostgreSQL muitas vezes transforma as duas escritas em planos parecidos."
+        },
+        {
+          "texto": "Falso",
+          "porque": ""
+        }
+      ],
+      "correta": 1,
+      "acerto": "Não há regra absoluta: o otimizador pode gerar planos equivalentes. É preciso testar com EXPLAIN.",
+      "fonte": {
+        "titulo": "Material — Subconsultas (base DVD Rental)",
+        "local": "Seção 10.1 (p. 8) · Visão introdutória de custo"
+      }
+    },
+    {
+      "id": 78,
+      "tipo": "assercao",
+      "topico": "Subconsultas",
+      "pergunta": "Analise as asserções e a relação proposta entre elas.",
+      "afirmativa": "Uma subconsulta correlacionada pode ficar mais custosa quando a tabela externa tem muitas linhas.",
+      "razao": "Ela pode precisar ser reavaliada para cada linha da consulta externa, enquanto uma subconsulta simples tende a ser calculada uma vez.",
+      "opcoes": [
+        {
+          "texto": "As duas são verdadeiras, e a II justifica a I.",
+          "porque": ""
+        },
+        {
+          "texto": "As duas são verdadeiras, mas a II não justifica a I.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "A I é verdadeira, e a II é falsa.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "A I é falsa, e a II é verdadeira.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        },
+        {
+          "texto": "As duas são falsas.",
+          "porque": "I e II são verdadeiras, e a II explica a I."
+        }
+      ],
+      "correta": 0,
+      "acerto": "A reavaliação linha a linha é o motivo do custo maior em grande volume.",
+      "fonte": {
+        "titulo": "Material — Subconsultas (base DVD Rental)",
+        "local": "Seção 10.2 (p. 8 e 9) · Situações comuns"
+      }
+    },
+    {
+      "id": 79,
+      "tipo": "multipla",
+      "topico": "Subconsultas",
+      "pergunta": "Para que serve escrever EXPLAIN antes de um SELECT no PostgreSQL?",
+      "opcoes": [
+        {
+          "texto": "Para executar a consulta mais rápido.",
+          "porque": "EXPLAIN não acelera; ele mostra como o banco pretende executar."
+        },
+        {
+          "texto": "Para exibir o plano de execução e o custo estimado da consulta.",
+          "porque": ""
+        },
+        {
+          "texto": "Para mostrar os comentários escritos na consulta.",
+          "porque": "EXPLAIN não lida com comentários."
+        },
+        {
+          "texto": "Para transformar a subconsulta em JOIN automaticamente.",
+          "porque": "Quem decide o plano é o otimizador; EXPLAIN só mostra."
+        },
+        {
+          "texto": "Para desfazer a última consulta.",
+          "porque": "Desfazer alterações é papel do ROLLBACK, em transações."
+        }
+      ],
+      "correta": 1,
+      "acerto": "EXPLAIN mostra o plano de execução, útil para comparar subconsulta e JOIN.",
+      "fonte": {
+        "titulo": "Material — Subconsultas (base DVD Rental)",
+        "local": "Seção 14 (p. 11) · Sugestão de uso do EXPLAIN"
+      }
+    },
+    {
+      "id": 80,
+      "tipo": "multipla",
+      "topico": "Subconsultas",
+      "pergunta": "Associe cada local de subconsulta ao seu uso: (1) no WHERE, (2) no FROM, (3) no SELECT. Qual associação está correta?",
+      "opcoes": [
+        {
+          "texto": "(1) filtra linhas; (2) cria uma tabela derivada; (3) calcula um valor por linha do resultado.",
+          "porque": ""
+        },
+        {
+          "texto": "(1) cria uma tabela derivada; (2) filtra linhas; (3) calcula uma coluna.",
+          "porque": "(1) e (2) estão trocados."
+        },
+        {
+          "texto": "(1) calcula uma coluna; (2) filtra linhas; (3) cria uma tabela derivada.",
+          "porque": "Todas estão trocadas."
+        },
+        {
+          "texto": "(1), (2) e (3) servem apenas para filtrar linhas.",
+          "porque": "No FROM e no SELECT, a subconsulta tem outros usos."
+        },
+        {
+          "texto": "Subconsultas só podem ser usadas no WHERE.",
+          "porque": "O slide mostra subconsultas no WHERE, FROM, SELECT e HAVING."
+        }
+      ],
+      "correta": 0,
+      "acerto": "WHERE filtra; FROM vira tabela (com alias); SELECT calcula um valor por linha.",
+      "fonte": {
+        "titulo": "Slides — Joins e Subconsultas",
+        "local": "Slide 12 · Tabela de tipos de subconsulta"
+      }
+    }
+  ]
+}

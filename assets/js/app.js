@@ -5,7 +5,7 @@
 
   const page = document.body.dataset.page;
   const letters = ['A', 'B', 'C', 'D', 'E'];
-  const typeLabels = { vf: 'Verdadeiro ou falso', codigo: 'Interpretação de código', assercao: 'Asserção e razão', uml: 'Diagrama UML', multipla: 'Múltipla escolha' };
+  const typeLabels = { vf: 'Verdadeiro ou falso', codigo: 'Interpretação de código', assercao: 'Asserção e razão', uml: 'Diagrama UML', multipla: 'Múltipla escolha', sql: 'Interpretação de SQL', modelo: 'Modelo de tabelas' };
   const $ = (tag, className, text) => {
     const node = document.createElement(tag);
     if (className) node.className = className;
@@ -64,7 +64,7 @@
       for (const entry of catalog.listas) {
         const card = $('article', 'catalog-card');
         const top = $('div', 'catalog-top');
-        top.append($('div', 'catalog-icon', '</>'));
+        top.append($('div', 'catalog-icon', entry.icone || '</>'));
         top.append($('span', 'small-pill', `${entry.questoes || 'Várias'} QUESTÕES`));
         card.append(top);
         card.append($('h3', null, entry.titulo));
@@ -112,7 +112,66 @@
     node.append(methods);
     return node;
   }
+  /* Modelo relacional: tabelas com colunas (PK/FK) e lista de relacionamentos. */
+  function erBox(def) {
+    const outer = $('div', 'er-diagram');
+    outer.setAttribute('role', 'group');
+    outer.setAttribute('aria-label', def.legenda);
+    const grid = $('div', 'er-grid');
+    for (const t of def.tabelas) {
+      const box = $('div', 'er-table');
+      box.append($('div', 'er-table-name', t.nome));
+      for (const c of t.colunas) {
+        const row = $('div', 'er-col');
+        const key = $('span', 'er-key' + (c.chave ? ' er-key-' + c.chave.toLowerCase().replace(/[^a-z]/g, '') : ''), c.chave || '');
+        row.append(key, $('span', 'er-col-name', c.nome), $('span', 'er-col-type', c.tipo || ''));
+        box.append(row);
+      }
+      grid.append(box);
+    }
+    outer.append(grid);
+    if (def.relacoes && def.relacoes.length) {
+      const rels = $('ul', 'er-rels');
+      for (const r of def.relacoes) {
+        const li = $('li');
+        li.append($('code', null, r.de), $('span', 'er-arrow', ' → '), $('code', null, r.para));
+        if (r.card) li.append($('span', 'er-card', r.card));
+        rels.append(li);
+      }
+      outer.append(rels);
+    }
+    outer.append($('div', 'uml-legend', def.legenda));
+    return outer;
+  }
+  /* Tabelas com dados de exemplo (registros) usadas pela questão. */
+  function dataTables(names, list) {
+    const holder = $('div', 'data-tables');
+    for (const name of names) {
+      const t = (list.tabelasDados || {})[name];
+      if (!t) continue;
+      const wrap = $('div', 'data-wrap');
+      const table = $('table', 'data-table');
+      table.append($('caption', null, t.titulo || name));
+      const head = $('tr');
+      for (const c of t.colunas) head.append($('th', null, c));
+      const thead = $('thead'); thead.append(head); table.append(thead);
+      const tbody = $('tbody');
+      for (const r of t.linhas) {
+        const tr = $('tr');
+        for (const v of r) {
+          const td = $('td', v === null ? 'is-null' : null, v === null ? 'NULL' : v);
+          tr.append(td);
+        }
+        tbody.append(tr);
+      }
+      table.append(tbody);
+      wrap.append(table);
+      holder.append(wrap);
+    }
+    return holder;
+  }
   function diagramBox(def) {
+    if (def.tipo === 'er') return erBox(def);
     const outer = $('div', 'uml-diagram');
     outer.setAttribute('role','group');
     outer.setAttribute('aria-label',def.legenda);
@@ -140,12 +199,14 @@
       claims.append(i, porque, ii);
       article.append(claims);
     }
+    if (q.diagrama && list.diagramas[q.diagrama]) article.append(diagramBox(list.diagramas[q.diagrama]));
+    if (Array.isArray(q.tabelas) && q.tabelas.length) article.append(dataTables(q.tabelas, list));
     if (q.codigo) {
       const code = $('pre', 'code-block');
       code.append($('code', null, q.codigo));
       article.append(code);
     }
-    if (q.diagrama && list.diagramas[q.diagrama]) article.append(diagramBox(list.diagramas[q.diagrama]));
+    if (q.complemento) article.append($('p', 'q-note', q.complemento));
     const choices = $('div', 'answer-options');
     choices.setAttribute('role', 'group');
     choices.setAttribute('aria-label', `Alternativas da questão ${q.id}`);
@@ -154,7 +215,7 @@
       btn.type = 'button';
       btn.dataset.answer = String(index);
       const letter = q.tipo === 'vf' ? ['V','F'][index] : letters[index];
-      btn.append($('span', 'choice-letter', letter), $('span', null, choice.texto));
+      btn.append($('span', 'choice-letter', letter), q.opcoesCodigo ? $('code', 'option-code', choice.texto) : $('span', null, choice.texto));
       btn.addEventListener('click', () => {
         if (progress[q.id]) return;
         progress[q.id] = { resposta: index };

@@ -8,17 +8,21 @@ Projeto de **listas de exercícios com correção imediata**, feito em HTML, CSS
 
 **[Abrir diretamente a lista Dart, POO, persistência e UML — 40 questões](https://jeffersonspeck.github.io/revisoes/lista.html?lista=dart-poo-persistencia-uml)**
 
+**[Abrir diretamente a lista Banco de Dados: DDL, DML, DQL, JOINs e subconsultas — 80 questões](https://jeffersonspeck.github.io/revisoes/lista.html?lista=banco-de-dados-sql)**
+
 > Os links acima serão ativados **depois da publicação**. Eles consideram que o repositório será criado com o nome `listas-interativas`, no usuário GitHub `jeffersonspeck`. Se usar outro nome, substitua o trecho do endereço correspondente.
 
-## Lista disponível
+## Listas disponíveis
 
 | Lista | Questões | Assuntos |
 | --- | ---: | --- |
 | Dart, POO, persistência e UML | 40 | Classes, instâncias, `final`/`const`, encapsulamento, getters, construtores, `copyWith`, `toMap`/`fromMap`, listas, estado, SQLite, Firebase RTDB, `Future`/`Stream` e diagramas UML |
+| Banco de Dados: DDL, DML, DQL, JOINs e subconsultas | 80 | `CREATE TABLE`, tipos de dados, `NOT NULL`/`UNIQUE`/`CHECK`/`DEFAULT`, PK composta, FK, `ON DELETE`/`ON UPDATE`, `INSERT`/`UPDATE`/`DELETE`, transações, `LIKE`/`ILIKE`, `BETWEEN`, `IS NULL`, agregações, `GROUP BY`/`HAVING`, INNER/LEFT/RIGHT/FULL/CROSS JOIN, subconsultas (escalar, `IN`, `NOT IN`, `ANY`, `ALL`, no `FROM`/`SELECT`, correlacionadas). `EXISTS` ainda não é cobrado. |
 
 ### O que o aluno encontra
 
-- Questões **verdadeiro/falso**, **asserção e razão**, **interpretação de código Dart** e **análise de diagramas UML**.
+- Questões **verdadeiro/falso**, **asserção e razão**, **interpretação de código Dart**, **análise de diagramas UML**, **interpretação de SQL** (prever resultado, achar o erro, escolher o comando certo) e **modelos de tabelas** (diagrama com PK/FK e relacionamentos).
+- Na lista de banco de dados, muitas questões mostram **tabelas com registros de exemplo** para o aluno simular a execução da consulta.
 - Feedback **imediato após clicar em uma alternativa**. Resposta certa: explicação curta. Resposta errada: motivo do erro, alternativa correta e justificativa.
 - **Pegadinhas conceituais**, com enunciados precisos e alternativas plausíveis.
 - Em **cada exercício**, o botão **“Onde revisar este conteúdo”** indica o PDF e a página ou o arquivo correspondente no GitHub.
@@ -64,6 +68,7 @@ listas-interativas/
 │   ├── catalogo.json                # cadastro das listas
 │   └── listas/
 │       ├── dart-poo-persistencia-uml.json
+│       ├── banco-de-dados-sql.json
 │       └── modelo-lista.json        # exemplo para copiar
 ├── scripts/
 │   └── validar_listas.py
@@ -102,14 +107,16 @@ Cada exercício contém:
 }
 ```
 
-- `tipo`: `vf`, `assercao`, `codigo`, `uml` ou `multipla`.
+- `tipo`: `vf`, `assercao`, `codigo`, `uml`, `multipla`, `sql` ou `modelo`.
 - `opcoes`: exatamente 2 (V/F) ou 5 (A–E), de acordo com o modelo. Cada opção **errada** deve ter um campo `porque` explicando brevemente o erro.
 - `correta`: índice da alternativa correta **começando em 0**. Assim, `0` é A (ou Verdadeiro); `1` é B (ou Falso).
 - `acerto`: explicação curta da correta (também mostrada depois de um erro).
 - `fonte`: `titulo` e `local` são obrigatórios; o campo `url` é opcional para um link clicável.
 - `codigo`: string contendo o exemplo Dart. Aparece num bloco formatado.
 - `afirmativa` e `razao`: textos das asserções I e II. As cinco alternativas são as habituais da prova.
-- `diagrama`: identificador de um dos diagramas declarados no objeto `diagramas` da lista. São desenhados na página com HTML/CSS.
+- `diagrama`: identificador de um dos diagramas declarados no objeto `diagramas` da lista. São desenhados na página com HTML/CSS. Um diagrama com `"tipo": "er"` é desenhado como modelo relacional: `tabelas` (cada uma com `colunas` de `nome`, `tipo` e `chave` opcional: `PK`, `FK`, `PK FK` ou `UQ`) e `relacoes` (`de`, `para`, `card`).
+- `tabelas`: lista de nomes declarados no objeto `tabelasDados` da lista (`titulo`, `colunas`, `linhas`). Exibe registros de exemplo; `null` aparece como **NULL**.
+- `opcoesCodigo`: `true` exibe as alternativas em fonte monoespaçada, para alternativas que são comandos SQL.
 
 **Convenção para asserção e razão:** A = ambas verdadeiras com justificativa; B = ambas verdadeiras sem justificativa; C = I verdadeira e II falsa; D = I falsa e II verdadeira; E = ambas falsas. Essa escala é a mesma utilizada na prova.
 
@@ -127,6 +134,16 @@ A lista foi elaborada a partir dos quatro conjuntos de estudo fornecidos para a 
 4. **[persistencia_flutter_firebase_RTDB](https://github.com/jeffersonspeck/persistencia_flutter_firebase_RTDB)**: `TodoItem`, `TodoRepository`, `FirebaseTodoRepository`, `Future`, `Stream` e operações no RTDB.
 
 **Observação sobre PDFs:** para evitar republicar material de terceiros sem autorização, os PDFs não estão incluídos neste repositório. O aluno vê o **nome do documento e a página exata** em cada questão e utiliza a cópia da apostila disponibilizada pelo professor. Os links do GitHub levam diretamente a arquivos públicos dos projetos.
+
+## Materiais utilizados na lista de Banco de Dados
+
+1. **DDL (19 páginas):** `CREATE TABLE`, tipos de dados, restrições de domínio, chave primária composta, restrições inline e nomeadas, `ON DELETE`/`ON UPDATE`.
+2. **DML (4 páginas):** `INSERT`, `UPDATE`, `DELETE`, transações (`BEGIN`, `COMMIT`, `ROLLBACK`) e boas práticas.
+3. **DQL (8 páginas):** `SELECT`, operadores, `LIKE`/`ILIKE`, `IS NULL`, `ORDER BY`, `GROUP BY`, `HAVING`, funções agregadas, joins e subconsulta.
+4. **Slides “Joins e Subconsultas”:** tabelas `clientes`/`pedidos` usadas nos exemplos de cada tipo de JOIN e subconsultas no `WHERE`, `FROM` e `SELECT`.
+5. **Material “Subconsultas” (base DVD Rental):** subconsultas escalares, de múltiplas linhas, correlacionadas, `ANY`, `ALL`, comparação com `INNER JOIN`, custo e `EXPLAIN`.
+
+As referências de cada questão indicam a página da apostila, a seção do material de subconsultas ou o número do slide.
 
 ## Características técnicas
 
